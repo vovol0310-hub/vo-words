@@ -1,0 +1,3120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vo · words</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --bg-elevated: #334155;
+
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            --border: rgba(148, 163, 184, 0.1);
+            --glow: rgba(99, 102, 241, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.3), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(139, 92, 246, 0.2), transparent),
+                radial-gradient(ellipse 60% 40% at 0% 100%, rgba(16, 185, 129, 0.15), transparent);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span:first-child {
+            color: var(--primary);
+        }
+
+        .logo span:last-child {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            background: var(--bg-elevated);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 30px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 2rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-item {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.625rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--bg-card);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+            min-height: calc(100vh - 150px);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mode Cards */
+        .mode-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-card {
+            background: linear-gradient(145deg, var(--bg-card) 0%, rgba(30, 41, 59, 0.5) 100%);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .mode-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .mode-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mode-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.375rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mode-card p {
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Card */
+        .stats-card,
+        .dict-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-card h3,
+        .dict-card h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(145deg, var(--bg-elevated) 0%, rgba(51, 65, 85, 0.5) 100%);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .dict-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            background: var(--bg-elevated);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .dict-info strong {
+            font-size: 1rem;
+        }
+
+        .dict-info span {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-left: 0.75rem;
+        }
+
+        /* Study Header */
+        .study-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .study-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .study-progress,
+        .matching-score {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Category Filter */
+        .category-filter {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-filter label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .category-select {
+            padding: 0.625rem 2.5rem 0.625rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.625rem;
+            font-size: 0.875rem;
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-select:hover {
+            border-color: var(--primary);
+        }
+
+        .category-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Spelling Mode */
+        .spelling-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .word-display {
+            margin-bottom: 3rem;
+        }
+
+        .word-display .word {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .sound-icon {
+            font-size: 1.75rem;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            -webkit-text-fill-color: initial;
+            filter: drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3));
+        }
+
+        .sound-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .sound-icon:active {
+            transform: scale(0.95);
+        }
+
+        .word-display .phonetic {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+        }
+
+        .word-display .meaning {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-elevated);
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+
+        .word-display .hint {
+            color: var(--text-dim);
+            font-size: 0.875rem;
+        }
+
+        .spelling-input {
+            width: 100%;
+            padding: 1.25rem;
+            font-size: 1.75rem;
+            text-align: center;
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            color: var(--text);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .spelling-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), 0 10px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        .spelling-input.correct {
+            border-color: var(--success);
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            color: #6ee7b7;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .spelling-input.incorrect {
+            border-color: var(--error);
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+            color: #fca5a5;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+
+        .spelling-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Matching Mode */
+        .matching-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .matching-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .matching-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .matching-item {
+            padding: 1rem 1.25rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .matching-item:hover {
+            border-color: var(--primary);
+            background: var(--bg-elevated);
+            transform: scale(1.02);
+        }
+
+        .matching-item.selected {
+            border-color: var(--primary);
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .matching-item.matched {
+            border-color: var(--success);
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
+            cursor: default;
+            color: #6ee7b7;
+        }
+
+        .matching-item.wrong {
+            border-color: var(--error);
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #fca5a5;
+        }
+
+        .matching-svg {
+            display: none;
+        }
+
+        .matching-score {
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Flashcard Mode */
+        .flashcard-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .flashcard {
+            perspective: 1200px;
+            margin-bottom: 2rem;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2.5rem;
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+        }
+
+        .flashcard-word {
+            font-size: 2.75rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .flashcard-phonetic {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+        }
+
+        .flashcard-meaning {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .flashcard-example {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+            margin-top: 1.25rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .flashcard-hint {
+            color: var(--text-dim);
+            margin-top: 2rem;
+            font-size: 0.8125rem;
+        }
+
+        .flashcard-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .flashcard-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+        }
+
+        /* Stats Page */
+        .stats-page {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .progress-bar-container {
+            margin-bottom: 1.25rem;
+        }
+
+        .progress-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        /* Upload Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            max-width: 480px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-elevated);
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Sync Status */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .sync-status.synced {
+            color: var(--success);
+        }
+
+        .sync-status.syncing {
+            color: var(--warning);
+        }
+
+        .sync-status.error {
+            color: var(--error);
+        }
+
+        .sync-status.synced::before {
+            content: '✓';
+        }
+
+        .sync-status.syncing::before {
+            content: '⟳';
+            animation: spin 1s linear infinite;
+        }
+
+        .sync-status.error::before {
+            content: '✕';
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Sync Settings Form */
+        .sync-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: var(--bg-elevated);
+            color: var(--text);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-help {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: -0.25rem;
+        }
+
+        .sync-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .sync-link:hover {
+            text-decoration: underline;
+        }
+
+        input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        code {
+            background: var(--bg-elevated);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            font-size: 0.8125em;
+        }
+
+        .upload-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 0.625rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h2 {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .empty-state p {
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav {
+                padding: 0.5rem 1rem;
+            }
+
+            .main {
+                padding: 1.5rem 1rem;
+            }
+
+            .mode-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .matching-area {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+
+            .word-display .word {
+                font-size: 2.5rem;
+            }
+
+            .flashcard-inner {
+                height: 320px;
+            }
+
+            .flashcard-word {
+                font-size: 2rem;
+            }
+
+            .flashcard-meaning {
+                font-size: 1.25rem;
+            }
+
+            .stat-item {
+                padding: 1rem 0.75rem;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Select dropdown */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-elevated);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
+        }
+
+        /* Confetti */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            top: -10px;
+            animation: confetti 3s ease-in-out forwards;
+            z-index: 9999;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <span>✦</span>
+            <span>vo·words</span>
+        </div>
+        <div class="header-controls">
+            <div id="syncStatus" class="sync-status" style="font-size: 0.75rem; color: var(--text-muted); margin-right: 0.5rem;"></div>
+            <button class="btn btn-outline" id="syncBtn" onclick="app.gistSync.sync()" title="同步进度到 GitHub Gist">
+                <span id="syncIcon">⟲</span> 同步
+            </button>
+            <button class="btn btn-outline" onclick="app.openSyncSettings()" title="同步设置">
+                ⚙
+            </button>
+            <select id="dictSelect" class="category-select" style="width: auto;">
+                <option value="default">雅思核心词汇 (283词)</option>
+            </select>
+            <button class="btn btn-outline" onclick="app.openUploadModal()">
+                上传词库
+            </button>
+            <button class="btn btn-outline" onclick="app.showPage('stats')">
+                统计
+            </button>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-item active" onclick="app.showPage('home')">
+            首页
+        </div>
+        <div class="nav-item" onclick="app.showPage('spelling')">
+            拼写
+        </div>
+        <div class="nav-item" onclick="app.showPage('matching')">
+            连线
+        </div>
+        <div class="nav-item" onclick="app.showPage('flashcard')">
+            闪卡
+        </div>
+        <div class="nav-item" onclick="app.showPage('review')">
+            复习
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Page -->
+        <div id="page-home" class="page active">
+            <div class="mode-cards">
+                <div class="mode-card" onclick="app.showPage('spelling')">
+                    <div class="icon">⌨</div>
+                    <h3>拼写</h3>
+                    <p>键盘输入练习</p>
+                </div>
+                <div class="mode-card" onclick="app.showPage('matching')">
+                    <div class="icon">◐</div>
+                    <h3>连线</h3>
+                    <p>英汉配对</p>
+                </div>
+                <div class="mode-card" onclick="app.showPage('flashcard')">
+                    <div class="icon">◈</div>
+                    <h3>闪卡</h3>
+                    <p>翻转复习</p>
+                </div>
+                <div class="mode-card" onclick="app.showPage('review')">
+                    <div class="icon">◎</div>
+                    <h3>复习</h3>
+                    <p>智能间隔</p>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h3>学习统计</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayCount">0</div>
+                        <div class="stat-label">今日学习</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCount">0</div>
+                        <div class="stat-label">累计学习</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="reviewCount">0</div>
+                        <div class="stat-label">今日待复习</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dict-card">
+                <h3>当前词库</h3>
+                <div class="dict-info">
+                    <div>
+                        <strong id="currentDictName">雅思核心词汇</strong>
+                        <span style="color: var(--text-light); margin-left: 1rem;" id="currentDictCount">283 词</span>
+                    </div>
+                    <button class="btn btn-outline" onclick="app.openUploadModal()">更换词库</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spelling Page -->
+        <div id="page-spelling" class="page">
+            <div class="study-header">
+                <button class="btn btn-outline" onclick="app.showPage('home')">← 返回</button>
+                <div class="study-progress">
+                    <span id="spellingProgress">0/0</span>
+                </div>
+            </div>
+
+            <div class="category-filter">
+                <label>选择专题：</label>
+                <select id="spellingCategory" class="category-select" onchange="app.spellingMode.init()">
+                    <option value="all">全部词汇</option>
+                </select>
+            </div>
+
+            <div id="spellingContent">
+                <div class="spelling-container">
+                    <div class="word-display">
+                        <div class="word">
+                            <span id="spellingWord">people</span>
+                            <span class="sound-icon" onclick="app.playPronunciation(document.getElementById('spellingWord').textContent)" title="播放发音">🔊</span>
+                        </div>
+                        <div class="phonetic" id="spellingPhonetic">/ˈpiːpl/</div>
+                        <div class="meaning" id="spellingMeaning">人类（作主语）</div>
+                        <div class="hint">按键盘输入单词拼写 · 点击 🔊 重播发音</div>
+                    </div>
+                    <input type="text" id="spellingInput" class="spelling-input" placeholder="输入单词..." autocomplete="off">
+                    <div class="spelling-actions">
+                        <button class="btn btn-outline" onclick="app.spellingMode.skip()">跳过 →</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="spellingComplete" class="hidden">
+                <div class="empty-state">
+                    <h2>完成练习</h2>
+                    <p>正确：<span id="spellingCorrect">0</span> · 错误：<span id="spellingWrong">0</span></p>
+                    <button class="btn btn-primary" onclick="app.spellingMode.restart()" style="margin-top: 1.5rem;">重新开始</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matching Page -->
+        <div id="page-matching" class="page">
+            <div class="study-header">
+                <button class="btn btn-outline" onclick="app.showPage('home')">← 返回</button>
+                <div class="matching-score" id="matchingScore">0/5</div>
+            </div>
+
+            <div class="category-filter">
+                <label>选择专题：</label>
+                <select id="matchingCategory" class="category-select" onchange="app.matchingMode.init()">
+                    <option value="all">全部词汇</option>
+                </select>
+            </div>
+
+            <div class="matching-container">
+                <div class="matching-area" id="matchingArea">
+                    <div class="matching-column" id="matchingLeft"></div>
+                    <div class="matching-column" id="matchingRight"></div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="app.matchingMode.submit()">提交答案</button>
+                    <button class="btn btn-outline" onclick="app.matchingMode.nextGroup()">下一组</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard Page -->
+        <div id="page-flashcard" class="page">
+            <div class="study-header">
+                <button class="btn btn-outline" onclick="app.showPage('home')">← 返回</button>
+                <div class="study-progress">
+                    <span id="flashcardProgress">0/0</span>
+                </div>
+            </div>
+
+            <div class="category-filter">
+                <label>选择专题：</label>
+                <select id="flashcardCategory" class="category-select" onchange="app.flashcardMode.init()">
+                    <option value="all">全部词汇</option>
+                </select>
+            </div>
+
+            <div id="flashcardContent">
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard" onclick="app.flashcardMode.flip()">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-word">
+                                    <span id="flashcardWord">people</span>
+                                    <span class="sound-icon" onclick="event.stopPropagation(); app.playPronunciation(document.getElementById('flashcardWord').textContent)" title="播放发音">🔊</span>
+                                </div>
+                                <div class="flashcard-phonetic" id="flashcardPhonetic">/ˈpiːpl/</div>
+                                <div class="flashcard-hint">点击卡片查看答案 · 点击 🔊 重播发音</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-word" id="flashcardBackWord">people</div>
+                                <div class="flashcard-meaning" id="flashcardMeaning">人类（作主语）</div>
+                                <div class="flashcard-example" id="flashcardExample"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard-actions">
+                        <button class="btn btn-danger" onclick="app.flashcardMode.rate(false)">不认识</button>
+                        <button class="btn btn-success" onclick="app.flashcardMode.rate(true)">认识</button>
+                        <button class="btn btn-outline" onclick="app.flashcardMode.next()">下一张</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="flashcardComplete" class="hidden">
+                <div class="empty-state">
+                    <h2>完成练习</h2>
+                    <p>认识：<span id="flashcardKnown">0</span> · 不认识：<span id="flashcardUnknown">0</span></p>
+                    <button class="btn btn-primary" onclick="app.flashcardMode.restart()" style="margin-top: 1.5rem;">重新开始</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Page -->
+        <div id="page-review" class="page">
+            <div class="study-header">
+                <button class="btn btn-outline" onclick="app.showPage('home')">← 返回</button>
+                <div class="study-progress">
+                    <span>复习模式</span>
+                </div>
+            </div>
+
+            <div id="reviewContent">
+                <div class="flashcard-container">
+                    <div style="text-align: center; padding: 2rem;">
+                        <div id="reviewWordCount" style="color: var(--text-light); margin-bottom: 1rem;">今日待复习：0 词</div>
+                        <button class="btn btn-primary" onclick="app.reviewMode.start()">开始复习</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviewActive" class="hidden">
+                <!-- 使用闪卡UI进行复习 -->
+                <div class="flashcard-container">
+                    <div class="flashcard" id="reviewFlashcard" onclick="app.reviewMode.flip()">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-word">
+                                    <span id="reviewWord">people</span>
+                                    <span class="sound-icon" onclick="event.stopPropagation(); app.playPronunciation(document.getElementById('reviewWord').textContent)" title="播放发音">🔊</span>
+                                </div>
+                                <div class="flashcard-phonetic" id="reviewPhonetic">/ˈpiːpl/</div>
+                                <div class="flashcard-hint">点击卡片查看答案 · 点击 🔊 重播发音</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-word" id="reviewBackWord">people</div>
+                                <div class="flashcard-meaning" id="reviewMeaning">人类（作主语）</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flashcard-actions">
+                        <button class="btn btn-danger" onclick="app.reviewMode.rate(false)">忘记了</button>
+                        <button class="btn btn-success" onclick="app.reviewMode.rate(true)">记住了</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviewComplete" class="hidden">
+                <div class="empty-state">
+                    <h2>复习完成</h2>
+                    <p>已复习：<span id="reviewTotal">0</span> 词</p>
+                    <button class="btn btn-primary" onclick="app.reviewMode.init()" style="margin-top: 1.5rem;">继续复习</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Page -->
+        <div id="page-stats" class="page">
+            <div class="study-header">
+                <button class="btn btn-outline" onclick="app.showPage('home')">← 返回</button>
+                <h2>统计</h2>
+            </div>
+
+            <div class="stats-page">
+                <div class="chart-container">
+                    <h3>专题进度</h3>
+                    <div id="categoryStats"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>学习记录（最近7天）</h3>
+                    <div id="weeklyStats"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <h2>上传词库</h2>
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">◐</div>
+                <p>点击选择文件或拖拽文件到此处</p>
+                <p style="color: var(--text-muted); font-size: 0.8125rem; margin-top: 0.5rem;">
+                    支持 JSON、Markdown、CSV 格式
+                </p>
+                <input type="file" id="fileInput" accept=".json,.md,.txt,.csv">
+            </div>
+            <div class="upload-preview hidden" id="uploadPreview"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="app.closeUploadModal()">取消</button>
+                <button class="btn btn-primary" onclick="app.uploadDictionary()">导入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Settings Modal -->
+    <div class="modal-overlay" id="syncSettingsModal">
+        <div class="modal">
+            <h2>同步设置</h2>
+            <div class="sync-form">
+                <div class="form-group">
+                    <label>GitHub Personal Access Token</label>
+                    <input type="password" id="gistToken" placeholder="ghp_xxxxxxxxxxxx">
+                    <div class="form-help">
+                        需要勾选 <code>gist</code> 权限。
+                        <a href="https://github.com/settings/tokens/new" target="_blank" class="sync-link">获取 Token →</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Gist ID（可选）</label>
+                    <input type="text" id="gistId" placeholder="已存在的话填入，留空则自动创建">
+                    <div class="form-help">首次使用留空，系统会自动创建 Gist</div>
+                </div>
+                <div class="form-group">
+                    <label>自动同步</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="autoSync" style="width: auto;">
+                        <span style="font-size: 0.875rem; color: var(--text-muted);">每次学习后自动同步</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="app.closeSyncSettings()">取消</button>
+                <button class="btn btn-primary" onclick="app.saveSyncSettings()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== Core Application ====================
+        const app = {
+            currentDict: null,
+            currentWords: [],
+            currentPage: 'home',
+
+            // Initialize the app
+            async init() {
+                // Load default dictionary or from localStorage
+                const savedDict = this.storage.get('currentDict');
+                if (savedDict) {
+                    this.currentDict = savedDict;
+                } else {
+                    this.currentDict = this.getDefaultDict();
+                }
+
+                this.currentWords = this.currentDict.words;
+                this.updateCategoryFilters();
+                this.updateStats();
+
+                // Initialize sync module
+                this.gistSync.init();
+
+                // Initialize all modes
+                this.spellingMode.init();
+                this.matchingMode.init();
+                this.flashcardMode.init();
+                this.reviewMode.init();
+
+                // Setup event listeners
+                this.setupEventListeners();
+
+                console.log('vo-words initialized with', this.currentWords.length, 'words');
+            },
+
+            // Page navigation
+            showPage(pageName) {
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+                // Show selected page
+                const page = document.getElementById('page-' + pageName);
+                if (page) {
+                    page.classList.add('active');
+                    this.currentPage = pageName;
+
+                    // Update nav
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => {
+                        if (item.textContent.includes(this.getPageTitle(pageName))) {
+                            item.classList.add('active');
+                        }
+                    });
+
+                    // Initialize mode
+                    if (pageName === 'spelling') this.spellingMode.init();
+                    if (pageName === 'matching') this.matchingMode.init();
+                    if (pageName === 'flashcard') this.flashcardMode.init();
+                    if (pageName === 'review') this.reviewMode.init();
+                    if (pageName === 'stats') this.statsMode.render();
+                }
+            },
+
+            getPageTitle(pageName) {
+                const titles = {
+                    'home': '首页',
+                    'spelling': '拼写',
+                    'matching': '连线',
+                    'flashcard': '翻翻卡',
+                    'review': '复习',
+                    'stats': '统计'
+                };
+                return titles[pageName] || '';
+            },
+
+            // Update category filter dropdowns
+            updateCategoryFilters() {
+                const categories = [...new Set(this.currentWords.map(w => w.category || '未分类'))];
+                const options = '<option value="all">全部词汇</option>' +
+                    categories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+                document.getElementById('spellingCategory').innerHTML = options;
+                document.getElementById('matchingCategory').innerHTML = options;
+                document.getElementById('flashcardCategory').innerHTML = options;
+            },
+
+            // Update stats display
+            updateStats() {
+                const stats = this.storage.getStats();
+                document.getElementById('todayCount').textContent = stats.today || 0;
+                document.getElementById('totalCount').textContent = stats.total || 0;
+
+                // Count words due for review
+                const now = Date.now();
+                const reviewWords = this.currentWords.filter(w => {
+                    const progress = this.storage.getWordProgress(w.word);
+                    return progress && progress.nextReview && progress.nextReview <= now;
+                });
+                document.getElementById('reviewCount').textContent = reviewWords.length;
+            },
+
+            // Get words by category
+            getWordsByCategory(category) {
+                if (category === 'all') return [...this.currentWords];
+                return this.currentWords.filter(w => w.category === category);
+            },
+
+            // Shuffle array
+            shuffle(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            },
+
+            // Play pronunciation
+            playPronunciation(word) {
+                const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`);
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            },
+
+            // Upload modal
+            openUploadModal() {
+                document.getElementById('uploadModal').classList.add('active');
+            },
+
+            closeUploadModal() {
+                document.getElementById('uploadModal').classList.remove('active');
+                document.getElementById('uploadPreview').classList.add('hidden');
+            },
+
+            uploadDictionary() {
+                const fileInput = document.getElementById('fileInput');
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert('请选择文件');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    const ext = file.name.split('.').pop().toLowerCase();
+
+                    try {
+                        let dict;
+                        if (ext === 'json') {
+                            dict = this.parser.parseJSON(content);
+                        } else if (ext === 'md' || ext === 'txt') {
+                            dict = this.parser.parseMarkdown(content);
+                        } else if (ext === 'csv') {
+                            dict = this.parser.parseCSV(content);
+                        } else {
+                            alert('不支持的文件格式');
+                            return;
+                        }
+
+                        if (dict && dict.words.length > 0) {
+                            this.currentDict = dict;
+                            this.currentWords = dict.words;
+                            this.storage.save('currentDict', dict);
+                            this.updateCategoryFilters();
+                            this.closeUploadModal();
+                            alert(`成功导入 ${dict.words.length} 个单词`);
+                        } else {
+                            alert('词库解析失败或为空');
+                        }
+                    } catch (error) {
+                        alert('解析失败：' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            setupEventListeners() {
+                // File input change
+                document.getElementById('fileInput').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        document.getElementById('uploadPreview').classList.remove('hidden');
+                        document.getElementById('uploadPreview').textContent = `已选择：${file.name}`;
+                    }
+                });
+
+                // Drag and drop
+                const uploadArea = document.getElementById('uploadArea');
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                        document.getElementById('fileInput').files = e.dataTransfer.files;
+                        document.getElementById('uploadPreview').classList.remove('hidden');
+                        document.getElementById('uploadPreview').textContent = `已选择：${file.name}`;
+                    }
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (this.currentPage === 'spelling') {
+                        if (e.key === 'Enter') {
+                            this.spellingMode.check();
+                        }
+                    }
+                });
+            },
+
+            // ==================== Storage Module ====================
+            storage: {
+                get(key) {
+                    try {
+                        return JSON.parse(localStorage.getItem('vo-words-' + key));
+                    } catch {
+                        return null;
+                    }
+                },
+                save(key, value) {
+                    localStorage.setItem('vo-words-' + key, JSON.stringify(value));
+                },
+                getWordProgress(word) {
+                    const progress = this.get('progress') || {};
+                    return progress[word] || null;
+                },
+                // 标记单词为已在拼写模式中学习过
+                markAsStudied(word) {
+                    const studied = this.get('studiedWords') || [];
+                    if (!studied.includes(word)) {
+                        studied.push(word);
+                        this.save('studiedWords', studied);
+                    }
+                },
+                // 获取已学习的单词列表
+                getStudiedWords() {
+                    return this.get('studiedWords') || [];
+                },
+                // 获取拼写模式的学习进度
+                getSpellingProgress() {
+                    return this.get('spellingProgress') || { index: 0, category: 'all' };
+                },
+                // 保存拼写模式的学习进度
+                saveSpellingProgress(category, index) {
+                    this.save('spellingProgress', { category, index });
+                },
+                updateWordProgress(word, result) {
+                    const progress = this.get('progress') || {};
+                    const wordProgress = progress[word] || {
+                        level: 0,
+                        correctCount: 0,
+                        wrongCount: 0,
+                        history: []
+                    };
+
+                    if (result === 'correct') {
+                        wordProgress.level = Math.min(wordProgress.level + 1, 6);
+                        wordProgress.correctCount++;
+                    } else {
+                        wordProgress.level = Math.max(wordProgress.level - 1, 0);
+                        wordProgress.wrongCount++;
+                    }
+
+                    // Calculate next review time based on level
+                    const intervals = [10*60*1000, 1*24*60*60*1000, 3*24*60*60*1000, 7*24*60*60*1000, 14*24*60*60*1000, 30*24*60*60*1000];
+                    wordProgress.nextReview = Date.now() + (intervals[wordProgress.level] || intervals[0]);
+                    wordProgress.lastReview = new Date().toISOString();
+
+                    progress[word] = wordProgress;
+                    this.save('progress', progress);
+
+                    // Update daily stats
+                    this.updateDailyStats(word, result);
+
+                    // Trigger auto-sync if enabled
+                    app.gistSync.autoSyncIfNeeded();
+                },
+                updateDailyStats(word, result) {
+                    const today = new Date().toISOString().split('T')[0];
+                    const stats = this.get('dailyStats') || {};
+
+                    if (!stats[today]) {
+                        stats[today] = { count: 0, words: [], correct: 0, wrong: 0 };
+                    }
+                    if (!stats[today].words.includes(word)) {
+                        stats[today].words.push(word);
+                        stats[today].count++;
+                    }
+                    if (result === 'correct') stats[today].correct++;
+                    else stats[today].wrong++;
+
+                    this.save('dailyStats', stats);
+                },
+                getStats() {
+                    const stats = this.get('dailyStats') || {};
+                    const today = new Date().toISOString().split('T')[0];
+                    const todayData = stats[today] || { count: 0 };
+
+                    let total = 0;
+                    Object.values(stats).forEach(s => total += s.words.length);
+
+                    return {
+                        today: todayData.count,
+                        total: total
+                    };
+                }
+            },
+
+            // ==================== Parser Module ====================
+            parser: {
+                parseJSON(content) {
+                    const data = JSON.parse(content);
+                    if (Array.isArray(data)) {
+                        return { name: '自定义词库', words: data.map(this.normalizeWord) };
+                    }
+                    return data;
+                },
+                parseMarkdown(content) {
+                    const words = [];
+                    const lines = content.split('\n');
+                    let currentCategory = '未分类';
+
+                    for (let line of lines) {
+                        // Detect category headers like "### 👤 人物类"
+                        const categoryMatch = line.match(/#{3,4}\s+([^\n]+)/);
+                        if (categoryMatch) {
+                            currentCategory = categoryMatch[1].trim().replace(/^[\p{Emoji}]+\s*/u, '');
+                            continue;
+                        }
+
+                        // Parse markdown table rows
+                        if (line.includes('|')) {
+                            const cols = line.split('|').map(c => c.trim()).filter(c => c);
+                            if (cols.length >= 3 && !cols[0].includes('---')) {
+                                const word = cols[0];
+                                const phonetic = cols[1] === '-' ? '' : cols[1];
+                                const meaning = cols[2];
+                                if (word && word !== '词汇') {
+                                    words.push({
+                                        word,
+                                        phonetic,
+                                        meaning,
+                                        category: currentCategory
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    return { name: '导入词库', words };
+                },
+                parseCSV(content) {
+                    const lines = content.split('\n');
+                    const words = [];
+                    let headers = [];
+
+                    lines.forEach((line, i) => {
+                        const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+                        if (i === 0) {
+                            headers = cols;
+                        } else if (cols.length >= 2) {
+                            words.push({
+                                word: cols[0],
+                                phonetic: cols[1] || '',
+                                meaning: cols[2] || '',
+                                category: cols[3] || '未分类'
+                            });
+                        }
+                    });
+
+                    return { name: 'CSV词库', words };
+                },
+                normalizeWord(item) {
+                    return {
+                        word: item.word || item.name || '',
+                        phonetic: item.phonetic || '',
+                        meaning: item.meaning || item.trans?.join(';') || '',
+                        category: item.category || '未分类',
+                        example: item.example || ''
+                    };
+                }
+            },
+
+            // ==================== Spelling Mode ====================
+            spellingMode: {
+                words: [],
+                shuffledWords: [],
+                currentIndex: 0,
+                correctCount: 0,
+                wrongCount: 0,
+
+                init() {
+                    const category = document.getElementById('spellingCategory').value;
+                    this.words = app.getWordsByCategory(category);
+
+                    // 每次都重新随机打乱
+                    this.shuffledWords = app.shuffle([...this.words]);
+                    this.currentIndex = 0;
+                    this.correctCount = 0;
+                    this.wrongCount = 0;
+
+                    if (this.words.length === 0) {
+                        document.getElementById('spellingContent').innerHTML = '<div class="empty-state"><p>该专题暂无单词</p></div>';
+                        return;
+                    }
+
+                    this.showWord();
+                },
+
+                showWord() {
+                    if (this.currentIndex >= this.shuffledWords.length) {
+                        this.showComplete();
+                        return;
+                    }
+
+                    const word = this.shuffledWords[this.currentIndex];
+                    document.getElementById('spellingWord').textContent = word.word;
+                    document.getElementById('spellingPhonetic').textContent = word.phonetic;
+                    document.getElementById('spellingMeaning').textContent = word.meaning;
+                    document.getElementById('spellingProgress').textContent = `${this.currentIndex + 1}/${this.shuffledWords.length}`;
+
+                    const input = document.getElementById('spellingInput');
+                    input.value = '';
+                    input.className = 'spelling-input';
+                    input.focus();
+
+                    document.getElementById('spellingContent').classList.remove('hidden');
+                    document.getElementById('spellingComplete').classList.add('hidden');
+
+                    // Play pronunciation
+                    app.playPronunciation(word.word);
+                },
+
+                check() {
+                    const input = document.getElementById('spellingInput');
+                    const userAnswer = input.value.trim().toLowerCase();
+                    const correctAnswer = this.shuffledWords[this.currentIndex].word.toLowerCase();
+                    const currentWord = this.shuffledWords[this.currentIndex];
+
+                    if (userAnswer === correctAnswer) {
+                        // 答对了：显示绿色，然后进入下一词
+                        input.classList.add('correct');
+                        input.classList.remove('incorrect');
+                        this.correctCount++;
+                        app.storage.updateWordProgress(currentWord.word, 'correct');
+
+                        // 标记为已学习
+                        app.storage.markAsStudied(currentWord.word);
+
+                        setTimeout(() => {
+                            this.currentIndex++;
+                            this.showWord();
+                        }, 500);
+                    } else {
+                        // 答错了：显示红色提示，清空输入框，保持焦点
+                        input.classList.add('incorrect');
+                        input.classList.remove('correct');
+                        input.value = ''; // 清空输入框
+                        input.focus(); // 保持焦点
+                        // 移除抖动动画类，下次可以重新触发
+                        input.style.animation = 'none';
+                        setTimeout(() => {
+                            input.style.animation = '';
+                        }, 10);
+                        // 不记录错误次数，等用户最终提交正确答案才算
+                    }
+                },
+
+                skip() {
+                    // 跳过也标记为已学习
+                    const currentWord = this.shuffledWords[this.currentIndex];
+                    app.storage.markAsStudied(currentWord.word);
+
+                    this.currentIndex++;
+                    this.showWord();
+                },
+
+                showComplete() {
+                    document.getElementById('spellingContent').classList.add('hidden');
+                    document.getElementById('spellingComplete').classList.remove('hidden');
+                    document.getElementById('spellingCorrect').textContent = this.correctCount;
+                    document.getElementById('spellingWrong').textContent = this.wrongCount;
+                },
+
+                restart() {
+                    this.init();
+                }
+            },
+
+            // ==================== Matching Mode ====================
+            matchingMode: {
+                words: [],
+                currentGroup: [],
+                usedWords: [],
+                selectedLeft: null,
+                selectedRight: null,
+                matches: [],
+                score: 0,
+
+                init() {
+                    const category = document.getElementById('matchingCategory').value;
+                    this.words = app.getWordsByCategory(category);
+                    this.usedWords = [];
+                    this.selectedLeft = null;
+                    this.selectedRight = null;
+                    this.matches = [];
+                    this.score = 0;
+
+                    this.nextGroup();
+                },
+
+                nextGroup() {
+                    // 获取未使用的单词
+                    const availableWords = this.words.filter(w => !this.usedWords.includes(w.word));
+
+                    if (availableWords.length === 0) {
+                        // 所有单词都用完了，重置
+                        this.usedWords = [];
+                        this.currentGroup = app.shuffle(this.words).slice(0, 5);
+                    } else {
+                        // 随机取5个（或更少，如果剩余不足5个）
+                        this.currentGroup = app.shuffle(availableWords).slice(0, Math.min(5, availableWords.length));
+                    }
+
+                    // 标记为已使用
+                    this.currentGroup.forEach(w => this.usedWords.push(w.word));
+
+                    // 再次打乱当前组的顺序
+                    this.currentGroup = app.shuffle(this.currentGroup);
+
+                    this.selectedLeft = null;
+                    this.selectedRight = null;
+                    this.matches = [];
+                    this.score = 0;
+
+                    this.render();
+                    document.getElementById('matchingScore').textContent = `0/${this.currentGroup.length}`;
+                },
+
+                render() {
+                    const leftCol = document.getElementById('matchingLeft');
+                    const rightCol = document.getElementById('matchingRight');
+
+                    // Shuffle right side
+                    const rightWords = app.shuffle([...this.currentGroup]);
+
+                    leftCol.innerHTML = this.currentGroup.map((w, i) =>
+                        `<div class="matching-item" data-index="${i}" data-word="${w.word}" onclick="app.matchingMode.selectLeft(${i})">${w.word}</div>`
+                    ).join('');
+
+                    rightCol.innerHTML = rightWords.map((w, i) =>
+                        `<div class="matching-item" data-index="${i}" data-word="${w.word}" onclick="app.matchingMode.selectRight(${i})">${w.meaning}</div>`
+                    ).join('');
+                },
+
+                selectLeft(index) {
+                    const items = document.querySelectorAll('#matchingLeft .matching-item');
+                    items.forEach(item => item.classList.remove('selected'));
+                    items[index].classList.add('selected');
+                    this.selectedLeft = index;
+
+                    // 点击单词时播放发音
+                    const word = this.currentGroup[index].word;
+                    app.playPronunciation(word);
+                },
+
+                selectRight(index) {
+                    const items = document.querySelectorAll('#matchingRight .matching-item');
+                    items.forEach(item => item.classList.remove('selected'));
+                    items[index].classList.add('selected');
+                    this.selectedRight = index;
+
+                    if (this.selectedLeft !== null) {
+                        this.makeMatch();
+                    }
+                },
+
+                makeMatch() {
+                    const leftItem = document.querySelectorAll('#matchingLeft .matching-item')[this.selectedLeft];
+                    const rightItem = document.querySelectorAll('#matchingRight .matching-item')[this.selectedRight];
+
+                    const leftWord = leftItem.dataset.word;
+                    const rightWord = rightItem.dataset.word;
+
+                    leftItem.classList.add('matched');
+                    rightItem.classList.add('matched');
+
+                    if (leftWord === rightWord) {
+                        // Correct match
+                        this.matches.push({ left: this.selectedLeft, right: this.selectedRight, correct: true });
+                    } else {
+                        // Wrong match - mark for validation
+                        this.matches.push({ left: this.selectedLeft, right: this.selectedRight, correct: false });
+                    }
+
+                    this.selectedLeft = null;
+                    this.selectedRight = null;
+
+                    document.querySelectorAll('#matchingLeft .matching-item, #matchingRight .matching-item')
+                        .forEach(item => item.classList.remove('selected'));
+                },
+
+                submit() {
+                    let correct = 0;
+                    this.matches.forEach(m => {
+                        const leftItem = document.querySelectorAll('#matchingLeft .matching-item')[m.left];
+                        const rightItem = document.querySelectorAll('#matchingRight .matching-item')[m.right];
+
+                        if (m.correct) {
+                            leftItem.classList.add('matched');
+                            rightItem.classList.add('matched');
+                            correct++;
+                        } else {
+                            leftItem.classList.add('wrong');
+                            rightItem.classList.add('wrong');
+                        }
+                    });
+
+                    this.score = correct;
+                    document.getElementById('matchingScore').textContent = `${correct}/${this.currentGroup.length}`;
+
+                    // Update progress for all words in group
+                    this.currentGroup.forEach(w => {
+                        const isCorrect = this.matches.some(m => m.correct && document.querySelectorAll('#matchingLeft .matching-item')[m.left].dataset.word === w.word);
+                        app.storage.updateWordProgress(w.word, isCorrect ? 'correct' : 'wrong');
+                    });
+                }
+            },
+
+            // ==================== Flashcard Mode ====================
+            flashcardMode: {
+                words: [],
+                currentIndex: 0,
+                knownCount: 0,
+                unknownCount: 0,
+                isFlipped: false,
+
+                init() {
+                    const category = document.getElementById('flashcardCategory').value;
+                    const categoryWords = app.getWordsByCategory(category);
+
+                    // 每次都重新随机打乱，获取最多20个单词
+                    this.words = app.shuffle(categoryWords).slice(0, 20);
+
+                    this.currentIndex = 0;
+                    this.knownCount = 0;
+                    this.unknownCount = 0;
+                    this.isFlipped = false;
+
+                    if (this.words.length === 0) {
+                        document.getElementById('flashcardContent').innerHTML = '<div class="empty-state"><p>该专题暂无单词</p></div>';
+                        return;
+                    }
+
+                    this.showCard();
+                },
+
+                showCard() {
+                    if (this.currentIndex >= this.words.length) {
+                        this.showComplete();
+                        return;
+                    }
+
+                    const word = this.words[this.currentIndex];
+                    document.getElementById('flashcardWord').textContent = word.word;
+                    document.getElementById('flashcardPhonetic').textContent = word.phonetic;
+                    document.getElementById('flashcardBackWord').textContent = word.word;
+                    document.getElementById('flashcardMeaning').textContent = word.meaning;
+                    document.getElementById('flashcardExample').textContent = word.example || '';
+                    document.getElementById('flashcardProgress').textContent = `${this.currentIndex + 1}/${this.words.length}`;
+
+                    // Reset flip state
+                    document.getElementById('flashcard').classList.remove('flipped');
+                    this.isFlipped = false;
+
+                    document.getElementById('flashcardContent').classList.remove('hidden');
+                    document.getElementById('flashcardComplete').classList.add('hidden');
+
+                    // Play pronunciation
+                    app.playPronunciation(word.word);
+                },
+
+                flip() {
+                    this.isFlipped = !this.isFlipped;
+                    document.getElementById('flashcard').classList.toggle('flipped', this.isFlipped);
+                },
+
+                rate(known) {
+                    if (known) {
+                        this.knownCount++;
+                        app.storage.updateWordProgress(this.words[this.currentIndex].word, 'correct');
+                    } else {
+                        this.unknownCount++;
+                        app.storage.updateWordProgress(this.words[this.currentIndex].word, 'wrong');
+                    }
+                    this.next();
+                },
+
+                next() {
+                    this.currentIndex++;
+                    this.showCard();
+                },
+
+                showComplete() {
+                    document.getElementById('flashcardContent').classList.add('hidden');
+                    document.getElementById('flashcardComplete').classList.remove('hidden');
+                    document.getElementById('flashcardKnown').textContent = this.knownCount;
+                    document.getElementById('flashcardUnknown').textContent = this.unknownCount;
+                },
+
+                restart() {
+                    this.init();
+                }
+            },
+
+            // ==================== Review Mode (SRS) ====================
+            reviewMode: {
+                reviewWords: [],
+                currentIndex: 0,
+                reviewed: 0,
+                isFlipped: false,
+
+                init() {
+                    // Get words due for review
+                    const now = Date.now();
+                    this.reviewWords = app.currentWords.filter(w => {
+                        const progress = app.storage.getWordProgress(w.word);
+                        return progress && progress.nextReview && progress.nextReview <= now;
+                    });
+
+                    document.getElementById('reviewWordCount').textContent = `今日待复习：${this.reviewWords.length} 词`;
+                    document.getElementById('reviewContent').classList.remove('hidden');
+                    document.getElementById('reviewActive').classList.add('hidden');
+                    document.getElementById('reviewComplete').classList.add('hidden');
+                },
+
+                start() {
+                    if (this.reviewWords.length === 0) {
+                        alert('没有需要复习的单词！');
+                        return;
+                    }
+
+                    this.currentIndex = 0;
+                    this.reviewed = 0;
+                    this.isFlipped = false;
+                    this.showCard();
+                },
+
+                showCard() {
+                    if (this.currentIndex >= this.reviewWords.length) {
+                        this.showComplete();
+                        return;
+                    }
+
+                    const word = this.reviewWords[this.currentIndex];
+                    document.getElementById('reviewWord').textContent = word.word;
+                    document.getElementById('reviewPhonetic').textContent = word.phonetic;
+                    document.getElementById('reviewBackWord').textContent = word.word;
+                    document.getElementById('reviewMeaning').textContent = word.meaning;
+
+                    // Reset flip state
+                    document.getElementById('reviewFlashcard').classList.remove('flipped');
+                    this.isFlipped = false;
+
+                    document.getElementById('reviewContent').classList.add('hidden');
+                    document.getElementById('reviewActive').classList.remove('hidden');
+                    document.getElementById('reviewComplete').classList.add('hidden');
+
+                    // Play pronunciation
+                    app.playPronunciation(word.word);
+                },
+
+                flip() {
+                    this.isFlipped = !this.isFlipped;
+                    document.getElementById('reviewFlashcard').classList.toggle('flipped', this.isFlipped);
+                },
+
+                rate(known) {
+                    app.storage.updateWordProgress(this.reviewWords[this.currentIndex].word, known ? 'correct' : 'wrong');
+                    this.reviewed++;
+                    this.currentIndex++;
+                    this.showCard();
+                },
+
+                showComplete() {
+                    document.getElementById('reviewContent').classList.add('hidden');
+                    document.getElementById('reviewActive').classList.add('hidden');
+                    document.getElementById('reviewComplete').classList.remove('hidden');
+                    document.getElementById('reviewTotal').textContent = this.reviewed;
+                }
+            },
+
+            // ==================== Stats Mode ====================
+            statsMode: {
+                render() {
+                    const categoryStats = this.getCategoryStats();
+                    const weeklyStats = this.getWeeklyStats();
+
+                    // Render category progress
+                    const categoryContainer = document.getElementById('categoryStats');
+                    categoryContainer.innerHTML = categoryStats.map(cat => `
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-label">
+                                <span>${cat.category}</span>
+                                <span>${cat.studied}/${cat.total}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width: ${(cat.studied/cat.total)*100}%">
+                                    ${Math.round((cat.studied/cat.total)*100)}%
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Render weekly stats
+                    const weeklyContainer = document.getElementById('weeklyStats');
+                    weeklyContainer.innerHTML = weeklyStats.map(day => `
+                        <div style="display: inline-block; text-align: center; width: ${100/7}%; margin: 0.5rem 0;">
+                            <div style="height: ${day.count * 20 + 20}px; background: var(--primary); border-radius: 4px 4px 0 0; min-height: 20px;"></div>
+                            <div style="font-size: 0.75rem; margin-top: 0.25rem;">${day.label}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-light);">${day.count}词</div>
+                        </div>
+                    `).join('');
+                },
+
+                getCategoryStats() {
+                    const categories = {};
+                    app.currentWords.forEach(w => {
+                        const cat = w.category || '未分类';
+                        if (!categories[cat]) categories[cat] = { total: 0, studied: 0 };
+                        categories[cat].total++;
+                        const progress = app.storage.getWordProgress(w.word);
+                        if (progress && progress.lastReview) categories[cat].studied++;
+                    });
+
+                    return Object.entries(categories).map(([cat, stats]) => ({
+                        category: cat,
+                        total: stats.total,
+                        studied: stats.studied
+                    })).sort((a, b) => b.total - a.total);
+                },
+
+                getWeeklyStats() {
+                    const days = [];
+                    for (let i = 6; i >= 0; i--) {
+                        const date = new Date();
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        const stats = app.storage.get('dailyStats') || {};
+                        const label = i === 0 ? '今天' : ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][date.getDay()];
+
+                        days.push({
+                            date: dateStr,
+                            label: label,
+                            count: (stats[dateStr]?.count || 0)
+                        });
+                    }
+                    return days;
+                }
+            },
+
+            // ==================== Gist Sync Module ====================
+            gistSync: {
+                settings: {
+                    token: null,
+                    gistId: null,
+                    autoSync: false
+                },
+
+                init() {
+                    const saved = localStorage.getItem('vo-words-gist-settings');
+                    if (saved) {
+                        try {
+                            this.settings = JSON.parse(saved);
+                        } catch (e) {
+                            console.error('Failed to parse gist settings:', e);
+                        }
+                    }
+                    this.updateStatusUI();
+                },
+
+                saveSettings(token, gistId, autoSync) {
+                    this.settings = { token, gistId, autoSync };
+                    localStorage.setItem('vo-words-gist-settings', JSON.stringify(this.settings));
+                },
+
+                updateStatusUI() {
+                    const statusEl = document.getElementById('syncStatus');
+                    if (!statusEl) return;
+
+                    const lastSync = localStorage.getItem('vo-words-last-sync');
+                    if (lastSync) {
+                        const date = new Date(lastSync);
+                        const now = new Date();
+                        const diff = Math.floor((now - date) / 60000);
+                        if (diff < 1) {
+                            statusEl.textContent = '刚刚同步';
+                            statusEl.className = 'sync-status synced';
+                        } else if (diff < 60) {
+                            statusEl.textContent = `${diff}分钟前同步`;
+                            statusEl.className = 'sync-status synced';
+                        } else {
+                            statusEl.textContent = date.toLocaleString();
+                            statusEl.className = 'sync-status synced';
+                        }
+                    } else if (!this.settings.token) {
+                        statusEl.textContent = '未配置';
+                        statusEl.className = 'sync-status';
+                    } else {
+                        statusEl.textContent = '待同步';
+                        statusEl.className = 'sync-status';
+                    }
+                },
+
+                async sync() {
+                    if (!this.settings.token) {
+                        alert('请先配置同步设置（点击 ⚙ 图标）');
+                        return;
+                    }
+
+                    const statusEl = document.getElementById('syncStatus');
+                    const syncIcon = document.getElementById('syncIcon');
+
+                    try {
+                        statusEl.className = 'sync-status syncing';
+                        statusEl.textContent = '同步中...';
+                        syncIcon.style.animation = 'spin 1s linear infinite';
+
+                        // Prepare data to sync
+                        const syncData = {
+                            version: 1,
+                            timestamp: new Date().toISOString(),
+                            data: {
+                                progress: app.storage.get('progress') || {},
+                                studiedWords: app.storage.get('studiedWords') || [],
+                                spellingProgress: app.storage.get('spellingProgress') || {},
+                                dailyStats: app.storage.get('dailyStats') || {}
+                            }
+                        };
+
+                        if (this.settings.gistId) {
+                            // Update existing gist
+                            await this.updateGist(syncData);
+                        } else {
+                            // Create new gist
+                            const gistId = await this.createGist(syncData);
+                            if (gistId) {
+                                this.settings.gistId = gistId;
+                                this.saveSettings(this.settings.token, gistId, this.settings.autoSync);
+                                document.getElementById('gistId').value = gistId;
+                            }
+                        }
+
+                        // Also try to pull and merge remote data
+                        await this.pullAndMerge();
+
+                        localStorage.setItem('vo-words-last-sync', new Date().toISOString());
+                        this.updateStatusUI();
+                        app.updateStats();
+
+                    } catch (error) {
+                        console.error('Sync failed:', error);
+                        statusEl.className = 'sync-status error';
+                        statusEl.textContent = '同步失败';
+                        alert('同步失败：' + error.message);
+                    } finally {
+                        syncIcon.style.animation = '';
+                    }
+                },
+
+                async createGist(data) {
+                    const response = await fetch('https://api.github.com/gists', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.settings.token}`,
+                            'Accept': 'application/vnd.github+json'
+                        },
+                        body: JSON.stringify({
+                            description: 'vo-words 学习进度同步',
+                            public: false,
+                            files: {
+                                'vo-words-data.json': {
+                                    content: JSON.stringify(data, null, 2)
+                                }
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('创建 Gist 失败：' + response.statusText);
+                    }
+
+                    const gist = await response.json();
+                    alert(`Gist 已创建！\nGist ID: ${gist.id}\n请保存此 ID 以便在其他设备上使用。`);
+                    return gist.id;
+                },
+
+                async updateGist(data) {
+                    const response = await fetch(`https://api.github.com/gists/${this.settings.gistId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${this.settings.token}`,
+                            'Accept': 'application/vnd.github+json'
+                        },
+                        body: JSON.stringify({
+                            files: {
+                                'vo-words-data.json': {
+                                    content: JSON.stringify(data, null, 2)
+                                }
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('更新 Gist 失败：' + response.statusText);
+                    }
+
+                    return await response.json();
+                },
+
+                async pullAndMerge() {
+                    if (!this.settings.gistId) return;
+
+                    const response = await fetch(`https://api.github.com/gists/${this.settings.gistId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.settings.token}`,
+                            'Accept': 'application/vnd.github+json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('获取 Gist 失败：' + response.statusText);
+                    }
+
+                    const gist = await response.json();
+                    const file = gist.files['vo-words-data.json'];
+
+                    if (!file) {
+                        console.warn('No vo-words-data.json found in gist');
+                        return;
+                    }
+
+                    const remoteData = JSON.parse(file.content);
+                    if (remoteData.data) {
+                        // Merge remote data with local data
+                        this.mergeRemoteData(remoteData.data);
+                    }
+                },
+
+                mergeRemoteData(remoteData) {
+                    // Merge progress - take the latest update for each word
+                    const localProgress = app.storage.get('progress') || {};
+                    const mergedProgress = { ...localProgress };
+
+                    for (const [word, remoteWordData] of Object.entries(remoteData.progress || {})) {
+                        const localWordData = localProgress[word];
+                        if (!localWordData) {
+                            mergedProgress[word] = remoteWordData;
+                        } else {
+                            // Keep the data with the latest review time
+                            const localTime = new Date(localWordData.lastReview || 0).getTime();
+                            const remoteTime = new Date(remoteWordData.lastReview || 0).getTime();
+                            if (remoteTime > localTime) {
+                                mergedProgress[word] = remoteWordData;
+                            }
+                        }
+                    }
+
+                    app.storage.save('progress', mergedProgress);
+
+                    // Merge studiedWords (union)
+                    const localStudied = app.storage.get('studiedWords') || [];
+                    const remoteStudied = remoteData.studiedWords || [];
+                    const mergedStudied = [...new Set([...localStudied, ...remoteStudied])];
+                    app.storage.save('studiedWords', mergedStudied);
+
+                    // Merge dailyStats
+                    const localStats = app.storage.get('dailyStats') || {};
+                    const mergedStats = { ...localStats };
+
+                    for (const [date, remoteDayData] of Object.entries(remoteData.dailyStats || {})) {
+                        if (!mergedStats[date]) {
+                            mergedStats[date] = remoteDayData;
+                        } else {
+                            // Sum up the counts
+                            mergedStats[date].count = Math.max(
+                                mergedStats[date].count || 0,
+                                remoteDayData.count || 0
+                            );
+                            mergedStats[date].correct = (mergedStats[date].correct || 0) + (remoteDayData.correct || 0);
+                            mergedStats[date].wrong = (mergedStats[date].wrong || 0) + (remoteDayData.wrong || 0);
+                            // Merge unique words
+                            const localWords = mergedStats[date].words || [];
+                            const remoteWords = remoteDayData.words || [];
+                            mergedStats[date].words = [...new Set([...localWords, ...remoteWords])];
+                        }
+                    }
+
+                    app.storage.save('dailyStats', mergedStats);
+                },
+
+                autoSyncIfNeeded() {
+                    if (this.settings.autoSync && this.settings.token) {
+                        this.sync().catch(e => console.error('Auto sync failed:', e));
+                    }
+                }
+            },
+
+            // Open sync settings modal
+            openSyncSettings() {
+                const modal = document.getElementById('syncSettingsModal');
+                const tokenInput = document.getElementById('gistToken');
+                const gistIdInput = document.getElementById('gistId');
+                const autoSyncCheck = document.getElementById('autoSync');
+
+                tokenInput.value = this.gistSync.settings.token || '';
+                gistIdInput.value = this.gistSync.settings.gistId || '';
+                autoSyncCheck.checked = this.gistSync.settings.autoSync || false;
+
+                modal.classList.add('active');
+            },
+
+            closeSyncSettings() {
+                document.getElementById('syncSettingsModal').classList.remove('active');
+            },
+
+            saveSyncSettings() {
+                const token = document.getElementById('gistToken').value.trim();
+                const gistId = document.getElementById('gistId').value.trim();
+                const autoSync = document.getElementById('autoSync').checked;
+
+                if (!token) {
+                    alert('请输入 GitHub Token');
+                    return;
+                }
+
+                this.gistSync.saveSettings(token, gistId, autoSync);
+                this.closeSyncSettings();
+                this.gistSync.updateStatusUI();
+
+                alert('设置已保存！');
+            },
+
+            // ==================== Default Dictionary ====================
+            getDefaultDict() {
+                return {
+                    name: '雅思核心词汇 (383词)',
+                    words: [
+                        // ========== 名词 ==========
+                        // 通用
+                        { word: 'people', phonetic: '', meaning: '人类（作主语，适用任何场景）', category: '通用' },
+                        { word: 'individual', phonetic: '', meaning: '个人', category: '通用' },
+                        { word: 'personal', phonetic: '', meaning: '个人的', category: '通用' },
+                        // 城市/乡村
+                        { word: 'city dwellers', phonetic: '/ˈdwelərz/', meaning: '城市居民', category: '城市/乡村' },
+                        { word: 'residents', phonetic: '/ˈrezɪdənts/', meaning: '居民', category: '城市/乡村' },
+                        { word: 'people living in the countryside', phonetic: '', meaning: '住在乡村的人', category: '城市/乡村' },
+                        { word: 'people living in rural areas', phonetic: '/ˈrʊərəl/', meaning: '生活在农村地区的人', category: '城市/乡村' },
+                        { word: 'people living in deprived areas', phonetic: '/dɪˈpraɪvɪd/', meaning: '生活在贫困地区的人', category: '城市/乡村' },
+                        // 教育
+                        { word: 'children', phonetic: '', meaning: '孩子，学生', category: '教育' },
+                        { word: 'pupils', phonetic: '/ˈpiːplz/', meaning: '学生（= children）', category: '教育' },
+                        { word: 'teenagers', phonetic: '/ˈtiːneɪdʒərz/', meaning: '青少年（13~19岁）', category: '教育' },
+                        { word: 'kids', phonetic: '', meaning: '小孩（未上学）', category: '教育' },
+                        { word: 'parents', phonetic: '/ˈpeərənts/', meaning: '父母', category: '教育' },
+                        { word: 'teachers', phonetic: '/ˈtiːtʃərz/', meaning: '老师', category: '教育' },
+                        // 工作-老板类
+                        { word: 'boss', phonetic: '', meaning: '老板', category: '工作-老板类' },
+                        { word: 'manager', phonetic: '/ˈmænɪdʒər/', meaning: '经理', category: '工作-老板类' },
+                        { word: 'leader', phonetic: '', meaning: '领导', category: '工作-老板类' },
+                        { word: 'employer', phonetic: '/ɪmˈplɔɪər/', meaning: '雇主', category: '工作-老板类' },
+                        { word: 'executive', phonetic: '/ɪɡˈzekjətɪv/', meaning: '高管，执行官', category: '工作-老板类' },
+                        // 工作-员工类
+                        { word: 'employee', phonetic: '/ɪmˈplɔiː/', meaning: '员工', category: '工作-员工类' },
+                        { word: 'staff', phonetic: '', meaning: '员工（集体）', category: '工作-员工类' },
+                        // 工作-求职者类
+                        { word: 'candidate', phonetic: '/ˈkændɪdeɪt/', meaning: '候选人，求职者', category: '工作-求职者类' },
+                        { word: 'applicant', phonetic: '/ˈæplɪkənt/', meaning: '申请人', category: '工作-求职者类' },
+                        { word: 'job seeker', phonetic: '', meaning: '求职者', category: '工作-求职者类' },
+                        // 体育-裁判类
+                        { word: 'umpire', phonetic: '/ˈʌmpaɪər/', meaning: '裁判（网球/棒球/板球）', category: '体育-裁判类' },
+                        { word: 'referee', phonetic: '/ˌrefəˈriː/', meaning: '裁判（足球/篮球）', category: '体育-裁判类' },
+                        { word: 'judge', phonetic: '/dʒʌdʒ/', meaning: '裁判，评审（体操/滑冰）', category: '体育-裁判类' },
+                        // 工作-公司类
+                        { word: 'companies', phonetic: '', meaning: '公司', category: '工作-公司类' },
+                        { word: 'business', phonetic: '', meaning: '生意，企业', category: '工作-公司类' },
+                        { word: 'multinational corporation', phonetic: '/ˌmʌltiˈnæʃənl ˌkɔːrpəˈreɪʃn/', meaning: '跨国公司', category: '工作-公司类' },
+                        { word: 'population', phonetic: '/ˌpɑːpjuˈleɪʃn/', meaning: '人口', category: '工作-公司类' },
+                        // 食物/营养类
+                        { word: 'nutrition', phonetic: '/nuːˈtrɪʃn/', meaning: '营养成分', category: '食物/营养类' },
+                        { word: 'fat', phonetic: '/fæt/', meaning: '脂肪', category: '食物/营养类' },
+                        { word: 'protein', phonetic: '/ˈproʊtiːn/', meaning: '蛋白质', category: '食物/营养类' },
+                        { word: 'salt', phonetic: '/sɔːlt/', meaning: '盐', category: '食物/营养类' },
+                        { word: 'fiber', phonetic: '/ˈfaɪbər/', meaning: '纤维', category: '食物/营养类' },
+                        { word: 'diet', phonetic: '/ˈdaɪət/', meaning: '饮食习惯 = feeding habit', category: '食物/营养类' },
+                        { word: 'NUTRIENT', phonetic: '/ˈnjuːtriənt/', meaning: '营养物质', category: '食物/营养类' },
+                        // 植物类
+                        { word: 'plant', phonetic: '/plænt/', meaning: '植物', category: '植物类' },
+                        { word: 'fungus', phonetic: '/ˈfʌŋɡəs/', meaning: '真菌（单数）', category: '植物类' },
+                        { word: 'bacteria', phonetic: '/bækˈtɪriə/', meaning: '细菌（复数）', category: '植物类' },
+                        { word: 'mushroom', phonetic: '/ˈmʌʃrʊm/', meaning: '蘑菇', category: '植物类' },
+                        { word: 'elm', phonetic: '/elm/', meaning: '榆树', category: '植物类' },
+                        { word: 'branch', phonetic: '/bræntʃ/', meaning: '树枝', category: '植物类' },
+                        { word: 'root', phonetic: '/ruːt/', meaning: '树根', category: '植物类' },
+                        { word: 'leaf', phonetic: '/liːf/', meaning: '树叶（单数）', category: '植物类' },
+                        { word: 'leaves', phonetic: '/liːvz/', meaning: '树叶（复数）', category: '植物类' },
+                        { word: 'bark', phonetic: '/bɑːrk/', meaning: '树枝、树杈', category: '植物类' },
+                        { word: 'seed', phonetic: '/siːd/', meaning: '种子', category: '植物类' },
+                        { word: 'seedling', phonetic: '/ˈsiːdlɪŋ/', meaning: '幼苗', category: '植物类' },
+                        { word: 'generation', phonetic: '/ˌdʒenəˈreɪʃn/', meaning: '一代，一代人', category: '植物类' },
+                        { word: 'block', phonetic: '/blɑːk/', meaning: '一块（名词）/ 堵塞（动词）', category: '植物类' },
+                        { word: 'Algae', phonetic: '/ˈælɡiː/', meaning: '藻类', category: '植物类' },
+                        { word: 'tend', phonetic: '', meaning: '倾向于，照料', category: '植物类' },
+                        // 动物类
+                        { word: 'wildlife', phonetic: '/ˈwaɪldlaɪf/', meaning: '野生动物', category: '动物类' },
+                        { word: 'species', phonetic: '/ˈspiːʃiːz/', meaning: '物种', category: '动物类' },
+                        { word: 'manatees', phonetic: '/mæˈniːtiːz/', meaning: '海牛', category: '动物类' },
+                        { word: 'mammal', phonetic: '/ˈmæml/', meaning: '哺乳动物', category: '动物类' },
+                        { word: 'giraffe', phonetic: '/dʒəˈræf/', meaning: '长颈鹿', category: '动物类' },
+                        { word: 'deer', phonetic: '/dɪr/', meaning: '小鹿', category: '动物类' },
+                        { word: 'predator', phonetic: '/ˈpredətər/', meaning: '捕猎者', category: '动物类' },
+                        { word: 'prey', phonetic: '/preɪ/', meaning: '猎物', category: '动物类' },
+                        { word: 'captive species', phonetic: '', meaning: '圈养的物种（动物园）', category: '动物类' },
+                        { word: 'reptile', phonetic: '/ˈreptaɪl/', meaning: '爬行动物', category: '动物类' },
+                        { word: 'marine mammals', phonetic: '', meaning: '海洋哺乳动物', category: '动物类' },
+                        { word: 'native species', phonetic: '', meaning: '本地物种', category: '动物类' },
+                        { word: 'alien species', phonetic: '', meaning: '外来物种', category: '动物类' },
+                        { word: 'introduced species', phonetic: '', meaning: '引入的物种', category: '动物类' },
+                        { word: 'clown fish', phonetic: '', meaning: '小丑鱼', category: '动物类' },
+                        { word: 'POLYPS', phonetic: '/ˈpɒlɪps/', meaning: '珊瑚虫', category: '动物类' },
+                        // 地理/历史类
+                        { word: 'colony', phonetic: '/ˈkɑːləni/', meaning: '殖民地', category: '地理/历史类' },
+                        { word: 'colonization', phonetic: '/ˌkɑːlənɪˈzeɪʃn/', meaning: '殖民（名词）', category: '地理/历史类' },
+                        { word: 'acceleration', phonetic: '/əkˌseləˈreɪʃn/', meaning: '加速度（名词）', category: '地理/历史类' },
+                        { word: 'Europe', phonetic: '/ˈjʊrəp/', meaning: '欧洲', category: '地理/历史类' },
+                        { word: 'Britain', phonetic: '/ˈbrɪtn/', meaning: '英国', category: '地理/历史类' },
+                        { word: 'alien', phonetic: '/ˈeɪliən/', meaning: '外来的，外星人', category: '地理/历史类' },
+                        { word: 'Planet', phonetic: '', meaning: '星球', category: '地理/历史类' },
+                        { word: 'Coral reef', phonetic: '', meaning: '珊瑚礁', category: '地理/历史类' },
+                        { word: 'Coral', phonetic: '', meaning: '珊瑚', category: '地理/历史类' },
+                        { word: 'Asteroid', phonetic: '', meaning: '小行星', category: '地理/历史类' },
+                        // 科学/研究类
+                        { word: 'laboratory', phonetic: '/ˈlæbrətɔːri/', meaning: '实验室', category: '科学/研究类' },
+                        { word: 'pattern', phonetic: '/ˈpætərn/', meaning: '模式，方案，图案', category: '科学/研究类' },
+                        { word: 'case', phonetic: '/keɪs/', meaning: '案例', category: '科学/研究类' },
+                        { word: 'case study', phonetic: '', meaning: '案例研究', category: '科学/研究类' },
+                        { word: 'analogue', phonetic: '/ˈænəlɔːɡ/', meaning: '相似物，模拟的', category: '科学/研究类' },
+                        { word: 'pathogen', phonetic: '/ˈpæθədʒən/', meaning: '病原体', category: '科学/研究类' },
+                        { word: 'horticulture', phonetic: '/ˈhɔːrtɪkʌltʃər/', meaning: '园艺学', category: '科学/研究类' },
+                        { word: 'PHOTOSYNTHESIZING', phonetic: '/ˌfəʊtəʊˈsɪnθəsaɪzɪŋ/', meaning: '光合作用（阅读常见）', category: '科学/研究类' },
+                        { word: 'RAY', phonetic: '', meaning: '光线', category: '科学/研究类' },
+                        { word: 'Temperature', phonetic: '', meaning: '温度', category: '科学/研究类' },
+                        { word: 'Climate', phonetic: '', meaning: '气候', category: '科学/研究类' },
+                        { word: 'Reef', phonetic: '', meaning: '暗礁，礁石', category: '科学/研究类' },
+                        { word: 'terraforming', phonetic: '', meaning: '地球化，使地球化', category: '科学/研究类' },
+                        // 情感/状态/事件类
+                        { word: 'stress', phonetic: '/stres/', meaning: '压力', category: '情感/状态类' },
+                        { word: 'judgement', phonetic: '/ˈdʒʌdʒmənt/', meaning: '判断', category: '情感/状态类' },
+                        { word: 'likelihood', phonetic: '/ˈlaɪklihʊd/', meaning: '可能性', category: '情感/状态类' },
+                        { word: 'eventuality', phonetic: '/ɪˌventʃuˈæləti/', meaning: '可能的情况，不测事件', category: '情感/状态类' },
+                        { word: 'entanglement', phonetic: '/ɪnˈtæŋɡlmənt/', meaning: '纠缠', category: '情感/状态类' },
+                        { word: 'accident', phonetic: '/ˈæksɪdənt/', meaning: '事故', category: '情感/状态类' },
+                        { word: 'victim', phonetic: '/ˈvɪktɪm/', meaning: '受害者', category: '情感/状态类' },
+                        { word: 'fraud', phonetic: '/frɔːd/', meaning: '欺骗', category: '情感/状态类' },
+                        { word: 'alarm', phonetic: '/əˈlɑːrm/', meaning: '警报，惊慌', category: '情感/状态类' },
+                        { word: 'fear', phonetic: '/fɪr/', meaning: '恐惧', category: '情感/状态类' },
+                        { word: 'Crisis', phonetic: '', meaning: '危机', category: '情感/状态类' },
+                        { word: 'tendency', phonetic: '', meaning: '倾向、趋势', category: '情感/状态类' },
+                        { word: 'Collide', phonetic: '', meaning: '冲突', category: '情感/状态类' },
+                        // 职业/活动/物品类
+                        { word: 'firefighter', phonetic: '/ˈfaɪərfaɪtər/', meaning: '消防员', category: '职业/活动类' },
+                        { word: 'panel', phonetic: '/ˈpænl/', meaning: '评审小组，专题讨论小组', category: '职业/活动类' },
+                        { word: 'public speech', phonetic: '', meaning: '公众演讲', category: '职业/活动类' },
+                        { word: 'record', phonetic: '/ˈrekərd/', meaning: '记录，录制，录音（名词）/rɪˈkɔːrd/ 录制（动词）', category: '职业/活动类' },
+                        { word: 'credit card', phonetic: '', meaning: '信用卡', category: '职业/活动类' },
+                        { word: 'plastic', phonetic: '/ˈplæstɪk/', meaning: '塑料', category: '职业/活动类' },
+                        { word: 'fishing industry', phonetic: '', meaning: '渔业', category: '职业/活动类' },
+                        { word: 'fishing net', phonetic: '', meaning: '渔网', category: '职业/活动类' },
+                        { word: 'consumer', phonetic: '/kənˈsuːmər/', meaning: '消费者', category: '职业/活动类' },
+                        { word: 'consumption', phonetic: '/kənˈsʌmpʃn/', meaning: '消费，消耗（名词）', category: '职业/活动类' },
+                        { word: 'defense', phonetic: '/dɪˈfens/', meaning: '防守，防卫', category: '职业/活动类' },
+                        { word: 'invasion', phonetic: '/ɪnˈveɪʒn/', meaning: '入侵，侵袭', category: '职业/活动类' },
+                        { word: 'boundary', phonetic: '/ˈbaʊndri/', meaning: '边界，界限，范围', category: '职业/活动类' },
+                        { word: 'animating force', phonetic: '', meaning: '核心驱动力，推动力', category: '职业/活动类' },
+                        { word: 'empire', phonetic: '/ˈempaɪər/', meaning: '帝国', category: '职业/活动类' },
+                        // 几何形状类
+                        { word: 'triangle', phonetic: '/ˈtraɪæŋɡl/', meaning: '三角形', category: '几何形状类' },
+                        { word: 'square', phonetic: '/skweər/', meaning: '正方形，方形', category: '几何形状类' },
+                        { word: 'blob', phonetic: '/blɒb/', meaning: '不规则的形状，斑点', category: '几何形状类' },
+                        // 科技/计算类
+                        { word: 'algorithms', phonetic: '/ˈælɡərɪðəmz/', meaning: '算法（复数）', category: '科技/计算类' },
+                        { word: 'algorithm', phonetic: '/ˈælɡərɪðəm/', meaning: '算法（单数）', category: '科技/计算类' },
+                        { word: 'cell', phonetic: '/sel/', meaning: '细胞', category: '科技/计算类' },
+                        { word: 'crystal', phonetic: '/ˈkrɪstl/', meaning: '结晶，晶体', category: '科技/计算类' },
+                        { word: 'machine', phonetic: '', meaning: '机器', category: '科技/计算类' },
+                        { word: 'stem', phonetic: '', meaning: '茎、干、根', category: '科技/计算类' },
+                        { word: 'steam', phonetic: '', meaning: '蒸汽，力量', category: '科技/计算类' },
+                        // 食物相关
+                        { word: 'beef', phonetic: '/biːf/', meaning: '牛肉', category: '食物相关' },
+                        { word: 'mutton', phonetic: '/ˈmʌtn/', meaning: '羊肉', category: '食物相关' },
+                        { word: 'frozen food', phonetic: '', meaning: '冷冻食物', category: '食物相关' },
+                        { word: 'palatable', phonetic: '/ˈpælətəbl/', meaning: '美味的，可食用的', category: '食物相关' },
+                        { word: 'deterioration', phonetic: '/dɪˌtɪəriəˈreɪʃn/', meaning: '恶化，变质（食物）', category: '食物相关' },
+                        // 物流/运输
+                        { word: 'shipment', phonetic: '/ˈʃɪpmənt/', meaning: '运输，装运', category: '物流/运输' },
+                        // 物理/状态变化
+                        { word: 'freeze', phonetic: '/friːz/', meaning: '结冰，冷冻（动词）', category: '物理/状态变化' },
+                        { word: 'frozen', phonetic: '/ˈfroʊzən/', meaning: '冷冻的（形容词/过去分词）', category: '物理/状态变化' },
+                        { word: 'freezing', phonetic: '/ˈfriːzɪŋ/', meaning: '冰冻的，严寒的（进行时/形容词）', category: '物理/状态变化' },
+                        { word: 'forming', phonetic: '/ˈfɔːrmɪŋ/', meaning: '使形成，制作', category: '物理/状态变化' },
+                        { word: 'expand', phonetic: '/ɪkˈspænd/', meaning: '扩张', category: '物理/状态变化' },
+                        { word: 'burst', phonetic: '/bɜːrst/', meaning: '爆炸', category: '物理/状态变化' },
+                        { word: 'spoil', phonetic: '/spɔɪl/', meaning: '①破坏，毁坏 ② 溺爱，惯坏', category: '物理/状态变化' },
+                        { word: 'extend', phonetic: '/ɪkˈstend/', meaning: '① 延伸，延长 ② 扩展，给予', category: '物理/状态变化' },
+                        // 质感/特征
+                        { word: 'texture', phonetic: '/ˈtekstʃər/', meaning: '质地，口感', category: '质感/特征' },
+                        { word: 'favor', phonetic: '/ˈfeɪvər/', meaning: '口味', category: '质感/特征' },
+                        { word: 'spoils', phonetic: '', meaning: '战利品（复数）', category: '质感/特征' },
+                        { word: 'Spectacular', phonetic: '', meaning: '壮观的', category: '质感/特征' },
+                        { word: 'vivid', phonetic: '', meaning: '颜色鲜艳的、生动的 = Bright', category: '质感/特征' },
+                        { word: 'Brilliant', phonetic: '/ˈbrɪliənt/', meaning: '巧妙的、闪耀的、聪明的', category: '质感/特征' },
+                        { word: 'brilliant tones', phonetic: '', meaning: '鲜艳的色泽（口语地道表达）', category: '质感/特征' },
+                        { word: 'TONE', phonetic: '', meaning: '色泽、语气、音色', category: '质感/特征' },
+                        { word: 'Realistic', phonetic: '', meaning: '现实的', category: '质感/特征' },
+                        { word: 'Benign', phonetic: '', meaning: '温和的、有益的、条件良好的', category: '质感/特征' },
+                        { word: 'visual', phonetic: '', meaning: '视觉的', category: '质感/特征' },
+                        { word: 'Creative', phonetic: '', meaning: '创造性的', category: '质感/特征' },
+                        { word: 'ambitious', phonetic: '', meaning: '有抱负的、有野心的', category: '质感/特征' },
+                        { word: 'Reliability', phonetic: '', meaning: '可靠性、可信度', category: '质感/特征' },
+                        { word: 'Flexibility', phonetic: '', meaning: '灵活度、弹性', category: '质感/特征' },
+                        { word: 'personify', phonetic: '', meaning: '使人格化', category: '质感/特征' },
+                        { word: 'inanimate', phonetic: '', meaning: '无生命的、无生气的', category: '质感/特征' },
+                        { word: 'autonomous', phonetic: '', meaning: '自主的，自制的', category: '质感/特征' },
+                        // 犯罪-罪犯类
+                        { word: 'criminal', phonetic: '/ˈkrɪmɪnl/', meaning: '罪犯', category: '犯罪-罪犯类' },
+                        { word: 'law breakers', phonetic: '/lɔː ˈbreɪkərz/', meaning: '违法者', category: '犯罪-罪犯类' },
+                        { word: 'offenders', phonetic: '/əˈfendərz/', meaning: '罪犯，违法者', category: '犯罪-罪犯类' },
+                        { word: 'culprit', phonetic: '/ˈkʌlprɪt/', meaning: '罪魁祸首，肇事者', category: '犯罪-罪犯类' },
+                        // 其他一般性人物
+                        { word: 'supporters', phonetic: '/səˈpɔːrtərz/', meaning: '支持者', category: '其他人物类' },
+                        { word: 'advocates', phonetic: '/ˈædvəkəts/', meaning: '倡导者，提倡者', category: '其他人物类' },
+                        { word: 'proponents', phonetic: '/prəˈpoʊnənts/', meaning: '支持者，拥护者', category: '其他人物类' },
+                        { word: 'opponents', phonetic: '/əˈpoʊnənts/', meaning: '反对者', category: '其他人物类' },
+                        // 邻居相关
+                        { word: 'neighbor', phonetic: '/ˈneɪbər/', meaning: '邻居', category: '邻居相关' },
+                        { word: 'neighborhood', phonetic: '/ˈneɪbərhʊd/', meaning: '社区，街坊', category: '邻居相关' },
+                        { word: 'community', phonetic: '/kəˈmjuːnəti/', meaning: '社区', category: '邻居相关' },
+                        { word: 'next-door neighbor', phonetic: '', meaning: '隔壁邻居', category: '邻居相关' },
+                        // 同事/同学相关
+                        { word: 'colleague', phonetic: '/ˈkɑːliːg/', meaning: '同事', category: '同事/同学类' },
+                        { word: 'coworker', phonetic: '/ˈkoʊwɜːrkər/', meaning: '同事', category: '同事/同学类' },
+                        { word: 'teammate', phonetic: '/ˈtiːmeɪt/', meaning: '队友', category: '同事/同学类' },
+                        { word: 'classmate', phonetic: '/ˈklæsmeɪt/', meaning: '同学', category: '同事/同学类' },
+                        { word: 'peer', phonetic: '/pɪr/', meaning: '同龄人，同龄同事', category: '同事/同学类' },
+                        // 名人相关
+                        { word: 'celebrity', phonetic: '/səˈlebbrəti/', meaning: '名人，明星', category: '名人相关' },
+                        { word: 'famous person', phonetic: '', meaning: '名人', category: '名人相关' },
+                        { word: 'star', phonetic: '', meaning: '明星', category: '名人相关' },
+                        { word: 'influencer', phonetic: '/ˈɪnfluənsər/', meaning: '影响者，网红', category: '名人相关' },
+                        { word: 'public figure', phonetic: '', meaning: '公众人物', category: '名人相关' },
+                        { word: 'role model', phonetic: '', meaning: '榜样', category: '名人相关' },
+                        { word: 'icon', phonetic: '/ˈaɪkɑːn/', meaning: '偶像，标志性人物', category: '名人相关' },
+                        // 网红/粉丝相关
+                        { word: 'internet celebrity', phonetic: '', meaning: '网红', category: '网红/粉丝类' },
+                        { word: 'online influencer', phonetic: '', meaning: '网络影响者', category: '网红/粉丝类' },
+                        { word: 'vlogger', phonetic: '/ˈvlɔːɡər/', meaning: '视频博主', category: '网红/粉丝类' },
+                        { word: 'blogger', phonetic: '/ˈblɔɡər/', meaning: '博主', category: '网红/粉丝类' },
+                        { word: 'follower', phonetic: '/ˈfɑːloʊər/', meaning: '关注者，粉丝', category: '网红/粉丝类' },
+                        { word: 'fan', phonetic: '/fæn/', meaning: '粉丝', category: '网红/粉丝类' },
+                        { word: 'audience', phonetic: '/ˈɔːdiəns/', meaning: '受众，观众', category: '网红/粉丝类' },
+                        { word: 'subscriber', phonetic: '/səbˈskraɪbər/', meaning: '订阅者', category: '网红/粉丝类' },
+                        { word: 'content creator', phonetic: '', meaning: '内容创作者', category: '网红/粉丝类' },
+                        // 生活习惯
+                        { word: 'night owl', phonetic: '', meaning: '熬夜的人（夜猫子）', category: '生活习惯' },
+                        { word: 'morning person', phonetic: '', meaning: '早起的人', category: '生活习惯' },
+                        // 动物相关
+                        { word: 'parrot', phonetic: '/ˈpærət/', meaning: '鹦鹉�', category: '动物相关' },
+                        { word: 'feather', phonetic: '/ˈfeðər/', meaning: '羽毛（鸟类）', category: '动物相关' },
+                        { word: 'fur', phonetic: '/fɜːr/', meaning: '毛皮（短毛，小猫小狗）', category: '动物相关' },
+                        { word: 'hair', phonetic: '/her/', meaning: '毛（长毛）', category: '动物相关' },
+                        { word: 'wing', phonetic: '/wɪŋ/', meaning: '翅膀', category: '动物相关' },
+                        { word: 'chicken wing', phonetic: '', meaning: '鸡翅', category: '动物相关' },
+                        { word: 'beak', phonetic: '/biːk/', meaning: '嘴巴（鸟喙）', category: '动物相关' },
+                        { word: 'eye', phonetic: '/aɪ/', meaning: '眼睛', category: '动物相关' },
+                        { word: 'feet', phonetic: '/fiːt/', meaning: '脚（复数）', category: '动物相关' },
+                        { word: 'foot', phonetic: '/fʊt/', meaning: '脚（单数）', category: '动物相关' },
+                        { word: 'tail', phonetic: '/teɪl/', meaning: '尾巴', category: '动物相关' },
+                        // 环境/自然相关
+                        { word: 'habitat', phonetic: '/ˈhæbɪtæt/', meaning: '栖息地', category: '环境/自然类' },
+                        { word: 'forest clearances', phonetic: '', meaning: '乱砍乱伐', category: '环境/自然类' },
+                        { word: 'deforestation', phonetic: '/ˌdiːˌfɔːrɪˈsteɪʃn/', meaning: '乱砍乱伐', category: '环境/自然类' },
+                        { word: 'logging company', phonetic: '', meaning: '伐木公司', category: '环境/自然类' },
+                        { word: 'timber', phonetic: '/ˈtɪmbər/', meaning: '木材', category: '环境/自然类' },
+                        { word: 'European', phonetic: '/jʊrəˈpiːən/', meaning: '欧洲的', category: '环境/自然类' },
+                        { word: 'remaining', phonetic: '/rɪˈmeɪnɪŋ/', meaning: '留下来的，剩余的', category: '环境/自然类' },
+                        { word: 'introduced', phonetic: '/ˌɪntrəˈduːst/', meaning: '引入的', category: '环境/自然类' },
+                        { word: 'depleted', phonetic: '/dɪˈpliːtɪd/', meaning: '消灭的，减少的', category: '环境/自然类' },
+                        { word: 'triangular', phonetic: '/traɪˈæŋɡjələr/', meaning: '三角形的', category: '环境/自然类' },
+                        // 责任/创新/技术类
+                        { word: 'Be responsible for', phonetic: '', meaning: '对...负责', category: '责任/技术类' },
+                        { word: 'Innovation', phonetic: '/ˌɪnəˈveɪʃn/', meaning: '创新', category: '责任/技术类' },
+                        { word: 'several', phonetic: '/ˈsevrəl/', meaning: '几个不同的，各自的', category: '责任/技术类' },
+                        { word: 'industry', phonetic: '/ˈɪndəstri/', meaning: '产业，工业，工厂', category: '责任/技术类' },
+                        { word: 'technique', phonetic: '/tekˈniːk/', meaning: '技术，技巧', category: '责任/技术类' },
+                        { word: 'reduce', phonetic: '/rɪˈduːs/', meaning: '减少', category: '责任/技术类' },
+                        { word: 'critical', phonetic: '/ˈkrɪtɪkl/', meaning: '关键的，批评的', category: '责任/技术类' },
+                        { word: 'damage', phonetic: '/ˈdæmɪdʒ/', meaning: '损坏，损害', category: '责任/技术类' },
+                        { word: 'package', phonetic: '/ˈpækɪdʒ/', meaning: '包装，包裹', category: '责任/技术类' },
+                        { word: 'introduce', phonetic: '/ˌɪntrəˈduːs/', meaning: '介绍，引进', category: '责任/技术类' },
+                        { word: 'Transparent', phonetic: '/trænsˈpærənt/', meaning: '透明的', category: '责任/技术类' },
+                        { word: 'manage', phonetic: '/ˈmænɪdʒ/', meaning: '管理', category: '责任/技术类' },
+                        { word: 'measure', phonetic: '/ˈmeʒər/', meaning: '措施，量表，测量', category: '责任/技术类' },
+                        // 时间/逻辑连接词
+                        { word: 'By + 年份', phonetic: '', meaning: '直到某一年', category: '连接词类' },
+                        { word: 'Annually', phonetic: '/ˈænjuəli/', meaning: '年度的，一年一度的', category: '连接词类' },
+                        { word: 'instead', phonetic: '/ɪnˈsted/', meaning: '反而，代替', category: '连接词类' },
+                        { word: 'In fact', phonetic: '', meaning: '事实上', category: '连接词类' },
+                        { word: 'However', phonetic: '/haʊˈevər/', meaning: '然而', category: '连接词类' },
+                        { word: 'Yet', phonetic: '/jet/', meaning: '然而，但是', category: '连接词类' },
+                        { word: 'while', phonetic: '/waɪl/', meaning: '然而，当...时候', category: '连接词类' },
+                        { word: 'Compare to', phonetic: '', meaning: '与...相比', category: '连接词类' },
+                        { word: 'link to', phonetic: '', meaning: '与...相关', category: '连接词类' },
+                        { word: 'Association', phonetic: '/əˌsoʊsiˈeɪʃn/', meaning: '联系，协会', category: '连接词类' },
+                        // 脑力/学习/研究类
+                        { word: 'Brain imaging', phonetic: '', meaning: '脑部成像技术', category: '学习/研究类' },
+                        { word: 'area', phonetic: '/ˈeəriə/', meaning: '区域，领域', category: '学习/研究类' },
+                        { word: 'Detect', phonetic: '/dɪˈtekt/', meaning: '侦查，检测', category: '学习/研究类' },
+                        { word: 'Detector', phonetic: '/dɪˈtektər/', meaning: '探测器', category: '学习/研究类' },
+                        { word: 'Detection', phonetic: '/dɪˈtekt/', meaning: '探测（名词）', category: '学习/研究类' },
+                        { word: 'Participant', phonetic: '/pɑːrˈtɪsɪpənt/', meaning: '参与者', category: '学习/研究类' },
+                        { word: 'Read regularly', phonetic: '/ˈredʒəli/', meaning: '定期的、有规律的', category: '学习/研究类' },
+                        { word: 'focus on', phonetic: '', meaning: '关注', category: '学习/研究类' },
+                        { word: 'stability', phonetic: '/stəˈbɪləti/', meaning: '稳定性', category: '学习/研究类' },
+                        { word: 'increase', phonetic: '/ɪnˈkriːs/', meaning: '增加，上升', category: '学习/研究类' },
+                        { word: 'decrease', phonetic: '/dɪˈkriːs/', meaning: '减少，下降', category: '学习/研究类' },
+                        // 食物/生活类
+                        { word: 'ready prepared', phonetic: '', meaning: '预制的', category: '食物/生活类' },
+                        { word: 'ready prepared meals', phonetic: '', meaning: '预制菜', category: '食物/生活类' },
+                        { word: 'convenient', phonetic: '/kənˈviːniənt/', meaning: '方便的', category: '食物/生活类' },
+                        { word: 'convenient single serving package', phonetic: '', meaning: '单人食物套餐', category: '食物/生活类' },
+                        { word: 'contain', phonetic: '/kənˈteɪn/', meaning: '包含', category: '食物/生活类' },
+                        { word: 'Segment', phonetic: '/ˈseɡment/', meaning: '部分，分段', category: '食物/生活类' },
+                        // 问题/警告类
+                        { word: 'Procrastination', phonetic: '/prəˌkræstɪˈneɪʃn/', meaning: '拖延症', category: '问题/警告类' },
+                        { word: 'urgent', phonetic: '/ˈɜːrdʒənt/', meaning: '紧急的', category: '问题/警告类' },
+                        { word: 'less urgent', phonetic: '', meaning: '不急不紧急', category: '问题/警告类' },
+                        { word: 'delay', phonetic: '/dɪˈleɪ/', meaning: '延迟、推迟', category: '问题/警告类' },
+                        { word: 'cancel', phonetic: '/ˈkænsəl/', meaning: '取消', category: '问题/警告类' },
+                        { word: 'Threat', phonetic: '/θret/', meaning: '威胁，恐吓', category: '问题/警告类' },
+                        { word: 'Regulation', phonetic: '/ˌreɡjəˈleɪʃn/', meaning: '规则，法规', category: '问题/警告类' },
+                        { word: 'Misconduct', phonetic: '/ˌmɪsˈkɒndʌkt/', meaning: '不当行为', category: '问题/警告类' },
+                        { word: 'Cheating', phonetic: '/ˈtʃiːtɪŋ/', meaning: '作弊', category: '问题/警告类' },
+                        { word: 'Plagiarism', phonetic: '/ˈpleɪdʒərɪzəm/', meaning: '剽窃', category: '问题/警告类' },
+                        { word: 'vicious', phonetic: '/ˈvɪʃəs/', meaning: '恶性的', category: '问题/警告类' },
+                        { word: 'Engage in', phonetic: '', meaning: '卷入，参与', category: '问题/警告类' },
+                        // 位置/居住类
+                        { word: 'Route', phonetic: '/ruːt/', meaning: '路线', category: '位置/居住类' },
+                        { word: 'Emotion', phonetic: '/ɪˈmoʊʃn/', meaning: '情绪', category: '位置/居住类' },
+                        // 工作/经济类
+                        { word: 'Employment', phonetic: '/ɪmˈplɔɪmənt/', meaning: '就业', category: '工作/经济类' },
+                        { word: 'Employment rate', phonetic: '', meaning: '就业率', category: '工作/经济类' },
+                        { word: 'Unemployment rate', phonetic: '', meaning: '失业率', category: '工作/经济类' },
+                        { word: 'Annual income', phonetic: '', meaning: '年薪', category: '工作/经济类' },
+                        // 健康/时间类
+                        { word: 'chronic', phonetic: '/ˈkrɒnɪk/', meaning: '慢性的，长期的', category: '健康/时间类' },
+                        { word: 'Chronically', phonetic: '/ˈkrɒnɪkli/', meaning: '长期地', category: '健康/时间类' },
+                        // 植物/动词短语
+                        { word: 'root out', phonetic: '/ruːt/', meaning: '驱逐，连根拔起，根除', category: '植物/动词类' },
+                        // 词组搭配
+                        { word: 'Manage our environment', phonetic: '', meaning: '管控环境，减少干扰因素', category: '词组搭配类' },
+                        { word: 'how we view the task', phonetic: '', meaning: '我们对任务的认知方式', category: '词组搭配类' },
+
+                        // ========== 动词 ==========
+                        // 居住/栖息
+                        { word: 'dwell', phonetic: '/dwel/', meaning: '居住于，栖息于', category: '动词-居住类' },
+                        { word: 'populate', phonetic: '/ˈpɑːpjuleɪt/', meaning: '居住于', category: '动词-居住类' },
+                        // 殖民/加速
+                        { word: 'colonize', phonetic: '/ˈkɑːlənaɪz/', meaning: '殖民', category: '动词-殖民类' },
+                        { word: 'accelerate', phonetic: '/əkˈseləreɪt/', meaning: '加速', category: '动词-殖民类' },
+                        // 动物行为
+                        { word: 'hunt', phonetic: '/hʌnt/', meaning: '打猎', category: '动词-动物类' },
+                        { word: 'rescue', phonetic: '/ˈreskjuː/', meaning: '营救', category: '动词-动物类' },
+                        { word: 'feed', phonetic: '/fiːd/', meaning: '喂养', category: '动词-动物类' },
+                        { word: 'fail', phonetic: '/feɪl/', meaning: '失败', category: '动词-动物类' },
+                        { word: 'reintroduce', phonetic: '/ˌriːɪntrəˈduːs/', meaning: '重新引入', category: '动词-动物类' },
+                        { word: 'breed', phonetic: '/briːd/', meaning: '培育', category: '动词-动物类' },
+                        { word: 'withstand', phonetic: '/wɪðˈstænd/', meaning: '忍受，抵抗', category: '动词-动物类' },
+                        // 植物/科学
+                        { word: 'wilt', phonetic: '/wɪlt/', meaning: '枯萎', category: '动词-植物类' },
+                        { word: 'inject', phonetic: '/ɪnˈdʒekt/', meaning: '注入，注射', category: '动词-科学类' },
+                        { word: 'replace', phonetic: '/rɪˈpleɪs/', meaning: '取代', category: '动词-科学类' },
+                        { word: 'estimate', phonetic: '/ˈestɪmeɪt/', meaning: '估计', category: '动词-科学类' },
+                        { word: 'observe', phonetic: '/əbˈzɜːrv/', meaning: '观察', category: '动词-科学类' },
+                        // 判断/允许
+                        { word: 'judge', phonetic: '/dʒʌdʒ/', meaning: '裁判，审判', category: '动词-判断类' },
+                        { word: 'allow', phonetic: '/əˈlaʊ/', meaning: '使...能够，允许', category: '动词-判断类' },
+                        { word: 'justify', phonetic: '/ˈdʒʌstɪfaɪ/', meaning: '证明...是合理的', category: '动词-判断类' },
+                        { word: 'prevent', phonetic: '/prɪˈvent/', meaning: '阻止', category: '动词-判断类' },
+                        // 通讯/增长
+                        { word: 'post', phonetic: '/poʊst/', meaning: '邮寄，发送，发布', category: '动词-通讯类' },
+                        { word: 'increase', phonetic: '/ɪnˈkriːs/', meaning: '增长', category: '动词-通讯类' },
+                        { word: 'spread', phonetic: '/spred/', meaning: '扩展，传播，散布，展开', category: '动词-通讯类' },
+                        // 重点词汇
+                        { word: 'defend', phonetic: '/dɪˈfend/', meaning: '防守，捍卫', category: '动词-重点词汇' },
+                        { word: 'invade', phonetic: '/ɪnˈveɪd/', meaning: '入侵，侵袭', category: '动词-重点词汇' },
+                        { word: 'modify', phonetic: '/ˈmɒdɪfaɪ/', meaning: '修改，改良', category: '动词-重点词汇' },
+                        { word: 'argue', phonetic: '/ˈɑːɡjuː/', meaning: '争论，主张', category: '动词-重点词汇' },
+                        { word: 'strike', phonetic: '/straɪk/', meaning: '击，打击，击球', category: '动词-重点词汇' },
+                        { word: 'count', phonetic: '/kaʊnt/', meaning: '数数，计算', category: '动词-重点词汇' },
+                        { word: 'animate', phonetic: '/ˈænɪmeɪt/', meaning: '赋予活力，使有生命', category: '动词-重点词汇' },
+                        { word: 'rise', phonetic: '', meaning: '上升，增加', category: '动词-重点词汇' },
+                        { word: 'Trigger', phonetic: '', meaning: '触发', category: '动词-重点词汇' },
+                        { word: 'Build', phonetic: '', meaning: '建造', category: '动词-重点词汇' },
+                        { word: 'Building', phonetic: '', meaning: '建筑物', category: '动词-重点词汇' },
+                        { word: 'Identify', phonetic: '', meaning: '确定（动词）', category: '动词-重点词汇' },
+                        { word: 'expect', phonetic: '', meaning: '期待', category: '动词-重点词汇' },
+                        { word: 'divide', phonetic: '', meaning: '分开、分割、分隔', category: '动词-重点词汇' },
+                        { word: 'Exist', phonetic: '', meaning: '存在', category: '动词-重点词汇' },
+                        { word: 'Carve', phonetic: '', meaning: '切下、割下', category: '动词-重点词汇' },
+                        { word: 'sample', phonetic: '', meaning: '尝试，抽样', category: '动词-重点词汇' },
+                        { word: 'scroll', phonetic: '', meaning: '卷轴', category: '动词-重点词汇' },
+                        { word: 'ridge', phonetic: '', meaning: '山脊', category: '动词-重点词汇' },
+                        { word: 'thrive', phonetic: '', meaning: '繁荣共生', category: '动词-重点词汇' },
+                        { word: 'presence', phonetic: '', meaning: '生存', category: '动词-重点词汇' },
+                        { word: 'giant', phonetic: '', meaning: '巨大的', category: '动词-重点词汇' },
+                        { word: 'tank', phonetic: '', meaning: '水箱，大的箱子', category: '动词-重点词汇' },
+
+                        // ========== 形容词 ==========
+                        { word: 'well-educated', phonetic: '', meaning: '受过良好教育的', category: '形容词-复合型' },
+                        { word: 'poorly-educated people', phonetic: '', meaning: '受教育程度低的人', category: '形容词-复合型' },
+                        { word: 'well-paid job', phonetic: '', meaning: '高薪工作', category: '形容词-复合型' },
+                        { word: 'web-based games', phonetic: '', meaning: '网络游戏', category: '形容词-复合型' },
+                        { word: 'technology-based teaching methods', phonetic: '', meaning: '基于科技的教学方法', category: '形容词-复合型' },
+                        { word: 'time-consuming', phonetic: '', meaning: '耗时的', category: '形容词-复合型' },
+                        { word: 'money-saving', phonetic: '', meaning: '省钱的', category: '形容词-复合型' },
+                        { word: 'cost-effective', phonetic: '/ˌkɔstɪˈfɛktɪv/', meaning: '性价比高的', category: '形容词-复合型' },
+                        { word: 'environment-friendly', phonetic: '', meaning: '环保的', category: '形容词-复合型' },
+                        { word: 'user-friendly', phonetic: '', meaning: '易于使用的', category: '形容词-复合型' },
+                        { word: 'pale', phonetic: '/peɪl/', meaning: '苍白的（面色）', category: '形容词-其他' },
+                        { word: 'predominantly', phonetic: '/prɪˈdɒmɪnəntli/', meaning: '绝大多数的，主要的，占主导地位的', category: '形容词-其他' },
+                        { word: 'relatively', phonetic: '/ˈrelətɪvli/', meaning: '相对地', category: '形容词-其他' },
+                        { word: 'forward', phonetic: '/ˈfɔːrwərd/', meaning: '向前的', category: '形容词-其他' },
+                        { word: 'supplementary', phonetic: '/ˌsʌplɪˈmentri/', meaning: '额外的，补充的', category: '形容词-其他' },
+                        { word: 'failing', phonetic: '/ˈfeɪlɪŋ/', meaning: '体弱的，衰退的', category: '形容词-其他' },
+                        { word: 'endangered', phonetic: '/ɪnˈdeɪndʒəd/', meaning: '濒危的', category: '形容词-其他' },
+                        { word: 'not endangered', phonetic: '', meaning: '不再濒危的', category: '形容词-其他' },
+                        { word: 'effective', phonetic: '/ɪˈfektɪv/', meaning: '有效的，实际的，起作用的', category: '形容词-其他' },
+                        { word: 'adverse', phonetic: '/ˈædvɜːrs/', meaning: '相反的，负面的', category: '形容词-其他' },
+                        { word: 'limited', phonetic: '/ˈlɪmɪtɪd/', meaning: '有限的（否定含义）', category: '形容词-其他' },
+                        { word: 'rare', phonetic: '/rer/', meaning: '稀有的（否定含义）', category: '形容词-其他' },
+                        { word: 'justified', phonetic: '/ˈdʒʌstɪfaɪd/', meaning: '合理的，正当的', category: '形容词-其他' },
+                        { word: 'rapidly', phonetic: '/ˈræpɪdli/', meaning: '迅速地', category: '形容词-其他' },
+                        { word: 'collective', phonetic: '/kəˈlektɪv/', meaning: '集体的', category: '形容词-其他' },
+                        { word: 'abrasive', phonetic: '/əˈbreɪsɪv/', meaning: '有研磨作用的，有腐蚀性的，刺耳的', category: '形容词-其他' },
+                        { word: 'aquatic', phonetic: '/əˈkwætɪk/', meaning: '水生的，水生植物相关的', category: '形容词-其他' },
+
+                        // ========== 副词 ==========
+                        { word: 'eventually', phonetic: '/ɪˈventʃuəli/', meaning: '最后，终于', category: '副词' },
+                        { word: 'rapidly', phonetic: '/ˈræpɪdli/', meaning: '迅速地', category: '副词' },
+                        { word: 'predominantly', phonetic: '/prɪˈdɒmɪnəntli/', meaning: '绝大多数的，主要的，占主导地位的', category: '副词' },
+                        { word: 'relatively', phonetic: '/ˈrelətɪvli/', meaning: '相对地', category: '副词' },
+
+                        // ========== 短语搭配 ==========
+                        { word: 'used to do sth', phonetic: '', meaning: '过去常常做某事', category: '短语搭配' },
+                        { word: 'against + doing', phonetic: '', meaning: '反对做某事', category: '短语搭配' },
+                        { word: 'in favor of + doing', phonetic: '', meaning: '支持做某事', category: '短语搭配' },
+                        { word: 'a great deal of', phonetic: '', meaning: '许多，大量（+不可数名词）', category: '短语搭配' },
+                        { word: 'many', phonetic: '', meaning: '许多（+可数名词复数）', category: '短语搭配' },
+                        { word: 'large numbers of', phonetic: '', meaning: '许多（+可数名词复数）', category: '短语搭配' },
+                        { word: 'a great amount of', phonetic: '', meaning: '许多（+不可数名词）', category: '短语搭配' },
+                        { word: 'greater than average', phonetic: '', meaning: '超过平均的', category: '短语搭配' },
+                        { word: 'depend on hearing', phonetic: '', meaning: '依赖听觉', category: '短语搭配' },
+                        { word: 'rely on scent', phonetic: '', meaning: '依靠嗅觉', category: '短语搭配' },
+                        { word: 'feeding habit', phonetic: '', meaning: '饮食习惯', category: '短语搭配' },
+                        { word: 'hand raising', phonetic: '', meaning: '人工喂养', category: '短语搭配' },
+                        { word: 'fail to do sth', phonetic: '', meaning: '没有成功做某事', category: '短语搭配' },
+                        { word: 'reintroduction program', phonetic: '/ˌriːɪntrəˈdʌkʃn ˈproʊɡræm/', meaning: '重新引入项目', category: '短语搭配' },
+                        { word: 'captivity species', phonetic: '', meaning: '人工繁殖的物种', category: '短语搭配' },
+                        { word: 'vascular system', phonetic: '/ˈvæskjələr ˈsɪstəm/', meaning: '血管系统', category: '短语搭配' },
+                        { word: 'microbes', phonetic: '/ˈmaɪkroʊbz/', meaning: '微生物', category: '短语搭配' },
+                        { word: 'the young generation', phonetic: '', meaning: '年轻的一代', category: '短语搭配' },
+                        { word: 'the old generation', phonetic: '', meaning: '老年人（60岁以上）', category: '短语搭配' },
+                        { word: 'seed germination', phonetic: '', meaning: '种子发芽', category: '短语搭配' },
+                        { word: 'a tiny amount of', phonetic: '', meaning: '少量', category: '短语搭配' },
+                        { word: 'causative agent', phonetic: '', meaning: '致病因子', category: '短语搭配' },
+                        { word: 'ask sb to do sth', phonetic: '', meaning: '要求某人做某事', category: '短语搭配' },
+                        { word: 'require sb to do sth', phonetic: '', meaning: '要求某人做某事', category: '短语搭配' },
+                        { word: 'adverse events', phonetic: '', meaning: '负面事件', category: '短语搭配' },
+                        { word: 'allow sb to do sth', phonetic: '', meaning: '使某人能够做某事', category: '短语搭配' },
+                        { word: 'not until ...', phonetic: '', meaning: '直到...才', category: '短语搭配' },
+                        { word: 'prevent sb from doing sth', phonetic: '', meaning: '阻止某人做某事', category: '短语搭配' },
+                        { word: 'stop sb from doing sth', phonetic: '', meaning: '阻止某人做某事', category: '短语搭配' },
+                        { word: 'worn down', phonetic: '', meaning: '磨损', category: '短语搭配' },
+                        { word: 'fall out', phonetic: '', meaning: '离开，争吵不和', category: '短语搭配' },
+                        { word: 'get pushed forward', phonetic: '', meaning: '被向前推移', category: '短语搭配' },
+                        { word: 'in case', phonetic: '', meaning: '以防万一', category: '短语搭配' },
+                        { word: 'take place', phonetic: '', meaning: '发生，举行', category: '短语搭配' },
+                        { word: 'beyond boundary', phonetic: '', meaning: '超过边界', category: '短语搭配' },
+                        { word: 'out of boundary', phonetic: '', meaning: '超出边界', category: '短语搭配' },
+                        { word: 'make a judgment', phonetic: '', meaning: '做出判断', category: '短语搭配' },
+                        { word: 'argue that...', phonetic: '', meaning: '认为，主张', category: '短语搭配' },
+                        { word: 'countless times', phonetic: '', meaning: '无数次', category: '短语搭配' },
+                        { word: 'according to', phonetic: '/əˈkɔːdɪŋ tu/', meaning: '根据，按照', category: '短语搭配' },
+                        { word: 'load up', phonetic: '', meaning: '上传，装载', category: '短语搭配' },
+                        { word: 'load into', phonetic: '', meaning: '上传到，装入', category: '短语搭配' },
+                        { word: 'loading', phonetic: '', meaning: '加载中', category: '短语搭配' },
+                        { word: 'defend an argument', phonetic: '', meaning: '捍卫观点', category: '短语搭配' },
+                        { word: 'instead', phonetic: '/ɪnˈsted/', meaning: '反而，代替', category: '短语搭配' },
+                        { word: 'In fact', phonetic: '', meaning: '事实上', category: '短语搭配' },
+                        { word: 'However', phonetic: '/haʊˈevər/', meaning: '然而', category: '短语搭配' },
+                        { word: 'Yet', phonetic: '/jet/', meaning: '然而，但是', category: '短语搭配' },
+                        { word: 'while', phonetic: '/waɪl/', meaning: '然而/当...时候', category: '短语搭配' },
+                        { word: 'Although / Even though', phonetic: '', meaning: '虽然，尽管', category: '短语搭配' },
+                        { word: 'In spite of', phonetic: '', meaning: '尽管，不顾', category: '短语搭配' },
+                        { word: 'Compare to', phonetic: '', meaning: '与...相比', category: '短语搭配' },
+                        { word: 'link to', phonetic: '', meaning: '与...相关', category: '短语搭配' },
+                        { word: 'Association', phonetic: '/əˌsoʊsiˈeɪʃn/', meaning: '联系，协会', category: '短语搭配' },
+                        { word: 'focus on', phonetic: '', meaning: '关注', category: '短语搭配' },
+                        { word: 'Run through', phonetic: '', meaning: '反复思考，过一遍', category: '短语搭配' },
+                        { word: 'Procrastination', phonetic: '/prəˌkræstɪˈneɪʃn/', meaning: '拖延症', category: '短语搭配' },
+                        { word: 'urgent', phonetic: '/ˈɜːrdʒənt/', meaning: '紧急的', category: '短语搭配' },
+                        { word: 'delay', phonetic: '/dɪˈleɪ/', meaning: '延迟、推迟', category: '短语搭配' },
+                        { word: 'cancel', phonetic: '/ˈkænsəl/', meaning: '取消', category: '短语搭配' },
+                        { word: 'Brain imaging', phonetic: '', meaning: '脑部成像技术', category: '短语搭配' },
+                        { word: 'Detection', phonetic: '/dɪˈtekt/', meaning: '探测（名词）', category: '短语搭配' },
+                        { word: 'Regulation', phonetic: '/ˌreɡjəˈleɪʃn/', meaning: '规则，法规', category: '短语搭配' },
+                        { word: 'Threat', phonetic: '/θret/', meaning: '威胁，恐吓', category: '短语搭配' },
+                        { word: 'Chronically', phonetic: '/ˈkrɒnɪkli/', meaning: '长期地', category: '短语搭配' },
+                        { word: 'Engage in', phonetic: '', meaning: '卷入，参与', category: '短语搭配' },
+                        { word: 'Misconduct', phonetic: '/ˌmɪsˈkɒndʌkt/', meaning: '不当行为', category: '短语搭配' },
+                        { word: 'Cheating', phonetic: '/ˈtʃiːtɪŋ/', meaning: '作弊', category: '短语搭配' },
+                        { word: 'Plagiarism', phonetic: '/ˈpleɪdʒərɪzəm/', meaning: '剽窃', category: '短语搭配' },
+                        { word: 'Participant', phonetic: '/pɑːrˈtɪsɪpənt/', meaning: '参与者', category: '短语搭配' },
+                        { word: 'Read regularly', phonetic: '/ˈredʒəli/', meaning: '定期的、有规律的', category: '短语搭配' },
+                        { word: 'Annual income', phonetic: '', meaning: '年薪', category: '短语搭配' },
+                        { word: 'Employment', phonetic: '/ɪmˈplɔɪmənt/', meaning: '就业', category: '短语搭配' },
+                        { word: 'Employment rate', phonetic: '', meaning: '就业率', category: '短语搭配' },
+                        { word: 'Unemployment rate', phonetic: '', meaning: '失业率', category: '短语搭配' },
+                        { word: 'stability', phonetic: '/stəˈbɪləti/', meaning: '稳定性', category: '短语搭配' },
+                        { word: 'measure', phonetic: '/ˈmeʒər/', meaning: '措施，量表，测量', category: '短语搭配' },
+                        { word: 'chronic', phonetic: '/ˈkrɒnɪk/', meaning: '慢性的，长期的', category: '短语搭配' },
+                        { word: 'increase', phonetic: '/ɪnˈkriːs/', meaning: '增加，上升', category: '短语搭配' },
+                        { word: 'decrease', phonetic: '/dɪˈkriːs/', meaning: '减少，下降', category: '短语搭配' },
+                        { word: 'Emotion', phonetic: '/ɪˈmoʊʃn/', meaning: '情绪', category: '短语搭配' },
+                        { word: 'root out', phonetic: '/ruːt/', meaning: '驱逐，连根拔起，根除', category: '短语搭配' },
+                        { word: 'vicious', phonetic: '/ˈvɪʃəs/', meaning: '恶性的', category: '短语搭配' },
+                        { word: 'triangular', phonetic: '/traɪˈæŋgjələr/', meaning: '三角形的', category: '短语搭配' },
+                        { word: 'well-educated', phonetic: '', meaning: '受过良好教育的', category: '短语搭配' },
+                        { word: 'well-paid', phonetic: '', meaning: '高薪的', category: '短语搭配' },
+                        { word: 'web-based', phonetic: '', meaning: '基于网络的', category: '短语搭配' },
+                        { word: 'technology-based', phonetic: '', meaning: '基于科技的', category: '短语搭配' },
+                        { word: 'time-consuming', phonetic: '', meaning: '耗时的', category: '短语搭配' },
+                        { word: 'money-saving', phonetic: '', meaning: '省钱的', category: '短语搭配' },
+                        { word: 'cost-effective', phonetic: '/ˌkɔstɪˈfɛktɪv/', meaning: '性价比高的', category: '短语搭配' },
+                        { word: 'environment-friendly', phonetic: '', meaning: '环保的', category: '短语搭配' },
+                        { word: 'user-friendly', phonetic: '', meaning: '易于使用的', category: '短语搭配' },
+                        { word: 'ready prepared', phonetic: '', meaning: '预制的', category: '短语搭配' },
+                        { word: 'palatable', phonetic: '/ˈpælətəbl/', meaning: '美味的，可食用的', category: '短语搭配' },
+                        { word: 'deterioration', phonetic: '/dɪˌtɪəriəˈreɪʃn/', meaning: '恶化，变质（食物）', category: '短语搭配' },
+                        { word: 'shipment', phonetic: '/ˈʃɪpmənt/', meaning: '运输，装运', category: '短语搭配' },
+                        { word: 'freeze', phonetic: '/friːz/', meaning: '结冰，冷冻（动词）', category: '短语搭配' },
+                        { word: 'frozen', phonetic: '/ˈfroʊzən/', meaning: '冷冻的（形容词/过去分词）', category: '短语搭配' },
+                        { word: 'freezing', phonetic: '/ˈfriːzɪŋ/', meaning: '冰冻的，严寒的（进行时/形容词）', category: '短语搭配' },
+                        { word: 'forming', phonetic: '/ˈfɔːrmɪŋ/', meaning: '使形成，制作', category: '短语搭配' },
+                        { word: 'expand', phonetic: '/ɪkˈspænd/', meaning: '扩张', category: '短语搭配' },
+                        { word: 'burst', phonetic: '/bɜːrst/', meaning: '爆炸', category: '短语搭配' },
+                        { word: 'spoil', phonetic: '/spɔɪl/', meaning: '①破坏，毁坏 ② 溺爱，惯坏', category: '短语搭配' },
+                        { word: 'extend', phonetic: '/ɪkˈstend/', meaning: '① 延伸，延长 ② 扩展，给予', category: '短语搭配' },
+                        { word: 'texture', phonetic: '/ˈtekstʃər/', meaning: '质地，口感', category: '短语搭配' },
+                        { word: 'favor', phonetic: '/ˈfeɪvər/', meaning: '口味', category: '短语搭配' },
+                        { word: 'spoils', phonetic: '', meaning: '战利品（复数）', category: '短语搭配' },
+                        { word: 'along with', phonetic: '', meaning: '伴随着', category: '短语搭配' },
+                        { word: 'have been done', phonetic: '', meaning: '现在完成时的被动语态', category: '短语搭配' },
+                        { word: 'transparency', phonetic: '', meaning: '透明，易于理解', category: '短语搭配' },
+                        { word: 'Protection', phonetic: '', meaning: '保护', category: '短语搭配' },
+                        { word: 'Rising ocean temperatures', phonetic: '', meaning: '海面温度上升', category: '短语搭配' },
+                        { word: 'Bleaching Events', phonetic: '', meaning: '珊瑚的白化事件', category: '短语搭配' },
+                        { word: 'Habitat destruction', phonetic: '', meaning: '栖息地被破坏', category: '短语搭配' },
+                        { word: 'Menace', phonetic: '/ˈmenəs/', meaning: '威胁（比Threat更强）', category: '短语搭配' },
+                        { word: 'Stripe', phonetic: '', meaning: '条纹', category: '短语搭配' },
+                        { word: 'strip', phonetic: '', meaning: '剥去，脱去', category: '短语搭配' },
+                        { word: 'Enable somebody to do something', phonetic: '', meaning: '使某人能够做某事', category: '短语搭配' },
+                        { word: 'Raw materials', phonetic: '', meaning: '原始材料', category: '短语搭配' },
+                        { word: 'Structure', phonetic: '', meaning: '结构', category: '短语搭配' },
+                        { word: 'Mine', phonetic: '', meaning: '矿', category: '短语搭配' },
+                        { word: 'Gold mine', phonetic: '', meaning: '金矿', category: '短语搭配' },
+                        { word: 'Mining', phonetic: '', meaning: '挖矿', category: '短语搭配' },
+                        { word: 'object', phonetic: '', meaning: '物体、目标', category: '短语搭配' },
+                        { word: 'speech', phonetic: '', meaning: '演讲、语音', category: '短语搭配' },
+                        { word: 'expert', phonetic: '', meaning: '熟练的、老道的（也可作名词：专家）', category: '短语搭配' },
+                        { word: 'intelligence', phonetic: '', meaning: '智力、才智、情报', category: '短语搭配' },
+                        { word: 'Creative intelligence', phonetic: '', meaning: '创造性智慧', category: '短语搭配' },
+                        { word: 'in her view', phonetic: '', meaning: '在她看来', category: '短语搭配' },
+                        { word: 'stem from', phonetic: '', meaning: '源于', category: '短语搭配' },
+                        { word: 'Based on', phonetic: '', meaning: '基于', category: '短语搭配' },
+                        { word: 'representation', phonetic: '', meaning: '代表、代理人', category: '短语搭配' },
+                        { word: 'represent', phonetic: '', meaning: '代表', category: '短语搭配' },
+                        { word: 'Division', phonetic: '', meaning: '分隔、分歧、分离、分支', category: '短语搭配' },
+                        { word: 'Separation', phonetic: '', meaning: '分离、分隔', category: '短语搭配' },
+                        { word: 'carve out', phonetic: '', meaning: '划分', category: '短语搭配' },
+                        { word: 'Sphere', phonetic: '', meaning: '范围、领域', category: '短语搭配' },
+                        { word: 'habit', phonetic: '/ˈhæbɪt/', meaning: '日常习惯', category: '位置/居住类' },
+                        { word: 'habitant', phonetic: '/ˈhæbɪtənt/', meaning: '居民', category: '位置/居住类' },
+                        { word: 'hobby', phonetic: '/ˈhɒbi/', meaning: '娱乐爱好', category: '位置/居住类' },
+                        { word: 'transparency', phonetic: '', meaning: '透明', category: '质感/特征' }
+                    ]
+                };
+            }
+        };
+
+        // Initialize app on load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
