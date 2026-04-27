@@ -1,0 +1,87 @@
+{
+    "name": "雅思渐进式学习示例词库",
+    "description": "包含3个高频单词的渐进式学习内容",
+    "words": [
+        {
+            "word": "people",
+            "phonetic": "/ˈpiːpl/",
+            "meaning": "人类，人们",
+            "category": "高频词",
+            "phrases": [
+                { "phrase": "a group of people", "meaning": "一群人" },
+                { "phrase": "many people believe", "meaning": "许多人认为" },
+                { "phrase": "ordinary people", "meaning": "普通人" }
+            ],
+            "simpleSentences": [
+                {
+                    "sentence": "Many _____ believe that education is important.",
+                    "answer": "people",
+                    "hints": ["many", "believe", "education"],
+                    "translation": "许多人认为教育很重要。"
+                }
+            ],
+            "advancedSentences": [
+                {
+                    "prompt": "请用 \"people\" 描述现代社会中不同背景的人如何通过数字平台联系在一起",
+                    "hints": ["diverse", "interconnected", "digital platform", "background"],
+                    "reference": "In modern society, people from diverse backgrounds are increasingly interconnected through digital platforms.",
+                    "translation": "在现代社会，来自不同背景的人们通过数字平台日益紧密地联系在一起。"
+                }
+            ]
+        },
+        {
+            "word": "environment",
+            "phonetic": "/ɪnˈvaɪrənmənt/",
+            "meaning": "环境",
+            "category": "高频词",
+            "phrases": [
+                { "phrase": "protect the environment", "meaning": "保护环境" },
+                { "phrase": "friendly to the environment", "meaning": "对环境友好" },
+                { "phrase": "polluted environment", "meaning": "受污染的环境" }
+            ],
+            "simpleSentences": [
+                {
+                    "sentence": "We should do our best to protect the _____.",
+                    "answer": "environment",
+                    "hints": ["protect", "our", "best"],
+                    "translation": "我们应该尽力保护环境。"
+                }
+            ],
+            "advancedSentences": [
+                {
+                    "prompt": "请用 \"environment\" 描述个人行为对环境的影响",
+                    "hints": ["collective action", "individual", "responsibility", "sustainable"],
+                    "reference": "Individual actions, when combined, can have a significant impact on the environment and contribute to a more sustainable future.",
+                    "translation": "个人的行动汇聚起来，可以对环境产生重大影响，有助于实现更可持续的未来。"
+                }
+            ]
+        },
+        {
+            "word": "important",
+            "phonetic": "/ɪmˈpɔːrtnt/",
+            "meaning": "重要的",
+            "category": "高频词",
+            "phrases": [
+                { "phrase": "play an important role", "meaning": "发挥重要作用" },
+                { "phrase": "it is important to", "meaning": "做某事很重要" },
+                { "phrase": "increasingly important", "meaning": "越来越重要" }
+            ],
+            "simpleSentences": [
+                {
+                    "sentence": "Education plays an _____ role in personal development.",
+                    "answer": "important",
+                    "hints": ["plays", "role", "development"],
+                    "translation": "教育在个人发展中发挥着重要作用。"
+                }
+            ],
+            "advancedSentences": [
+                {
+                    "prompt": "请用 \"important\" 描述为什么持续学习在当今社会很重要",
+                    "hints": ["rapidly changing", "adapt", "competitive", "essential"],
+                    "reference": "In today's rapidly changing world, it is important to continuously learn new skills in order to remain competitive in the job market.",
+                    "translation": "在当今快速变化的世界中，持续学习新技能对于在就业市场保持竞争力非常重要。"
+                }
+            ]
+        }
+    ]
+}
